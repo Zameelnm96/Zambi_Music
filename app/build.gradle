@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.zambimusic"
-        minSdkVersion 23
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
