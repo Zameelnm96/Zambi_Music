@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity{
     private  static final int REQUEST_PERMISSION = 100;
     private  static final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
     Button btnSongs;
-    SeekBar seekBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         btnSongs = findViewById(R.id.btnSongs);
+
+
         btnSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

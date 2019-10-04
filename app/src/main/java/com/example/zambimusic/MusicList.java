@@ -9,9 +9,14 @@ import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,14 +27,54 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     RecyclerView.Adapter adapter;
     List<Song> songs;
     RecyclerView.LayoutManager layoutManager;
+    SeekBar seekBar;
+    LinearLayout seekBarParent;
+    Button btn;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
+
+
+        btn = findViewById(R.id.btn);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyApplication.mediaPlayer!=null){
+                    if (MyApplication.mediaPlayer.isPlaying()){
+                        btn.setBackgroundResource(R.drawable.ic_icon);
+                        MyApplication.mediaPlayer.pause();
+                        MyApplication.lastPosition = MyApplication.mediaPlayer.getCurrentPosition();
+                    }
+                    else
+                    {
+                        btn.setBackgroundResource(R.drawable.ic_pause_circular_button);
+                        MyApplication.mediaPlayer.seekTo(MyApplication.lastPosition);
+                        MyApplication.mediaPlayer.start();
+                    }
+
+                }
+            }
+        });
+
+
+        seekBarParent = findViewById(R.id.seekBarParent);
+        seekBarParent.setVisibility(View.INVISIBLE);
+        if (MyApplication.mediaPlayer!=null){
+            if (!MyApplication.mediaPlayer.isPlaying()){
+                seekBarParent.setVisibility(View.INVISIBLE);
+            }
+            else {
+                //seekBarParent.setVisibility(View.VISIBLE);
+            }
+        }
+        
         songs = new ArrayList<>();
         fillMusicList();
 
-
+        seekBar = findViewById(R.id.seekBar);
 
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -39,8 +84,28 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progress;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                this.progress = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mCurrentPosition = progress;
+                MyApplication.mediaPlayer.seekTo(progress);
+            }
+        });
+
 
     }
+
     /*private List<String> musicFileList = new ArrayList<>();*/
     public void fillMusicList(){
         songs.clear();
@@ -68,21 +133,56 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     }
 
     public void playMusicFile(String path){
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        MyApplication.mediaPlayer = new MediaPlayer();
         try{
-            mediaPlayer.setDataSource(path);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+            MyApplication.mediaPlayer.setDataSource(path);
+            MyApplication.mediaPlayer.prepare();
+            MyApplication.mediaPlayer.start();
         }
         catch (Exception e ){
             e.printStackTrace();
+        }
+
+    }
+    int mCurrentPosition;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (MyApplication.mediaPlayer!=null){
+            if (MyApplication.mediaPlayer.isPlaying()){
+                seekBarParent.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onItemClicked(int index) {
+        if (MyApplication.mediaPlayer!=null) {
+            MyApplication.mediaPlayer.stop(); // stop the media player
+            MyApplication.mediaPlayer.reset();
+        }
+        seekBarParent.setVisibility(View.VISIBLE);
+        seekBar.setVisibility(View.VISIBLE);
+        btn.setBackgroundResource(R.drawable.ic_pause_circular_button);
         Song song = songs.get(index);
         playMusicFile(song.getPath());
+        int duration =MyApplication.mediaPlayer.getDuration();
+        seekBar.setMax(duration);
+        final Handler handler = new Handler();
+//Make sure you update Seekbar on UI thread
+        MusicList.this.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if(MyApplication.mediaPlayer != null){
+                    mCurrentPosition = MyApplication.mediaPlayer.getCurrentPosition() ;
+                    seekBar.setProgress(mCurrentPosition);
+                }
+                handler.postDelayed(this, 1000);
+            }
+        });
+
 
 
     }
