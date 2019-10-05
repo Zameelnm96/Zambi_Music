@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -27,17 +28,23 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     RecyclerView.Adapter adapter;
     List<Song> songs;
     RecyclerView.LayoutManager layoutManager;
-    SeekBar seekBar;
     LinearLayout seekBarParent;
     Button btn;
-
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
 
-
+        textView = findViewById(R.id.tvName);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MyApplication.mediaPlayer!=null){
+                }
+            }
+        });
         btn = findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,18 +70,16 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         seekBarParent = findViewById(R.id.seekBarParent);
         seekBarParent.setVisibility(View.INVISIBLE);
         if (MyApplication.mediaPlayer!=null){
-            if (!MyApplication.mediaPlayer.isPlaying()){
-                seekBarParent.setVisibility(View.INVISIBLE);
-            }
-            else {
-                //seekBarParent.setVisibility(View.VISIBLE);
-            }
+
+            seekBarParent.setVisibility(View.VISIBLE);
+
+
         }
         
         songs = new ArrayList<>();
         fillMusicList();
 
-        seekBar = findViewById(R.id.seekBar);
+        MyApplication.seekBar = findViewById(R.id.seekBar);
 
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -84,7 +89,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        MyApplication.seekBar .setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -150,10 +155,24 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     protected void onResume() {
         super.onResume();
         if (MyApplication.mediaPlayer!=null){
-            if (MyApplication.mediaPlayer.isPlaying()){
                 seekBarParent.setVisibility(View.VISIBLE);
-            }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+           }
+
+    /*@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Toast.makeText(this,"onBackPressed running",Toast.LENGTH_SHORT).show();
+    }*/
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -163,12 +182,12 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             MyApplication.mediaPlayer.reset();
         }
         seekBarParent.setVisibility(View.VISIBLE);
-        seekBar.setVisibility(View.VISIBLE);
+        MyApplication.seekBar .setVisibility(View.VISIBLE);
         btn.setBackgroundResource(R.drawable.ic_pause_circular_button);
         Song song = songs.get(index);
         playMusicFile(song.getPath());
         int duration =MyApplication.mediaPlayer.getDuration();
-        seekBar.setMax(duration);
+        MyApplication.seekBar .setMax(duration);
         final Handler handler = new Handler();
 //Make sure you update Seekbar on UI thread
         MusicList.this.runOnUiThread(new Runnable() {
@@ -177,7 +196,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             public void run() {
                 if(MyApplication.mediaPlayer != null){
                     mCurrentPosition = MyApplication.mediaPlayer.getCurrentPosition() ;
-                    seekBar.setProgress(mCurrentPosition);
+                    MyApplication.seekBar .setProgress(mCurrentPosition);
                 }
                 handler.postDelayed(this, 1000);
             }
@@ -190,4 +209,6 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         String[] temp = path.split("/");
         return temp[temp.length-1];
     }
+
+
 }
