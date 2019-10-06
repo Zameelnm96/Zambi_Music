@@ -21,12 +21,15 @@
                 android:title="@string/order"
                 app:showAsAction="never">
                 <menu>
-                    <item
-                        android:id="@+id/ascending"
-                        android:title="@string/ascending_order"/>
-                    <item
-                        android:id="@+id/descending"
-                        android:title="@string/descending_order"/>
+
+                        <item
+                             android:id="@+id/ascending"
+
+                             android:title="@string/ascending_order"/>
+                        <item
+                            android:id="@+id/descending"
+
+                            android:title="@string/descending_order"/>
 
 
                 </menu>

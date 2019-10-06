@@ -1,5 +1,8 @@
 package com.example.zambimusic;
 
+import android.content.ContentUris;
+import android.net.Uri;
+
 public class Song implements Comparable<Song> {
 
 
@@ -9,6 +12,24 @@ public class Song implements Comparable<Song> {
     private String artists;
     private String dateModified;
     private String dateAdded;
+    private long albumId;
+
+
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
+    }
+
+    public long getAlbumId() {
+        return albumId;
+    }
+
+    public Uri getUriAlbumArt(long albumId) {
+        return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId); // return the uri of album art.
+    }
+
+
+
+
 
     public String getDuration() {
         return duration;

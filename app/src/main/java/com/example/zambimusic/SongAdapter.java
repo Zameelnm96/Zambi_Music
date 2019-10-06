@@ -4,13 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static java.security.AccessController.getContext;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
     private List<Song> songs;
@@ -37,6 +43,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         holder.itemView.setTag(songs.get(position));
         Song song = songs.get(position);
         holder.tvSong.setText(song.getName());
+        holder.tvArtists.setText(song.getArtists());
+        Picasso.get()
+                .load(song.getUriAlbumArt(song.getAlbumId()).toString())       //here we load image with album art uri uri
+                .error(R.drawable.ic_icon)
+                .into(holder.ivAlbumArt);
+
     }
 
     @Override
@@ -45,10 +57,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView tvSong;
+        private TextView tvSong,tvArtists;
+        private ImageView ivAlbumArt;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSong = itemView.findViewById(R.id.tvSong);
+            tvArtists = itemView.findViewById(R.id.tvArtist);
+            ivAlbumArt = itemView.findViewById(R.id.ivAlbumArt);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -1,48 +1,30 @@
 package com.example.zambimusic;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-
-
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.microedition.khronos.egl.EGLDisplay;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked {
     RecyclerView recyclerView;
@@ -111,6 +93,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             case R.id.itemName:
 
                 GetAllMediaMp3Files(sortOrderByName);
+                if (reversed){
+                    Collections.reverse(songs);
+                }
                 adapter = new SongAdapter(this,songs);
                 recyclerView.setAdapter(adapter);
                 editor.putString("sortBy", MediaStore.MediaColumns.DISPLAY_NAME);// save the state of sorting
@@ -119,6 +104,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             case R.id.itemDateModified:
 
                 GetAllMediaMp3Files(sortOrderByDateModified);
+                if (reversed){
+                    Collections.reverse(songs);
+                }
                 adapter = new SongAdapter(this,songs);
                 recyclerView.setAdapter(adapter);
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_MODIFIED);
@@ -127,6 +115,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             case R.id.itemDateAdded:
 
                 GetAllMediaMp3Files(sortOrderByDateAdded);
+                if (reversed){
+                    Collections.reverse(songs);
+                }
                 adapter = new SongAdapter(this,songs);
                 recyclerView.setAdapter(adapter);
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_ADDED);
@@ -198,6 +189,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             int album = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int dateModified = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED);
             int dateAdded = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED);
+            int album_id = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);// we can use this for get album art as define in Song class getUriAlbumArt() Method
+
+
 
 
 
@@ -214,6 +208,10 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                 String songDateModified = cursor.getString(dateModified);
                 String songDateAdded = cursor.getString(dateAdded);
                 String songAtrists = cursor.getString(artist);
+                String songAbumId  = cursor.getString(album_id);
+                long parseLong = Long.parseLong(songAbumId);
+
+
 
 
                 // Adding Media File Names to ListElementsArrayList.
@@ -223,6 +221,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                 song.setDateAdded(songDateAdded);
                 song.setDateModified(songDateModified);
                 song.setArtists(songAtrists);
+                song.setAlbumId(parseLong);
 
 
                 songs.add(song);
