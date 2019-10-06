@@ -7,7 +7,7 @@ import android.widget.SeekBar;
 public class MyApplication extends Application {
     public static MediaPlayer mediaPlayer;
     public static int       lastPosition;
-    public static SeekBar seekBar;;
+    public static SeekBar seekBar;
 
 
 

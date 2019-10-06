@@ -26,25 +26,24 @@ import java.util.List;
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked {
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
-    List<Song> songs;
+    public static List<Song> songs;
     RecyclerView.LayoutManager layoutManager;
     LinearLayout seekBarParent;
     Button btn;
     TextView textView;
+    private Runnable runnable;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
 
+        handler = new Handler();
+
         textView = findViewById(R.id.tvName);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MyApplication.mediaPlayer!=null){
-                }
-            }
-        });
+
+
         btn = findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,10 +71,16 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         if (MyApplication.mediaPlayer!=null){
 
             seekBarParent.setVisibility(View.VISIBLE);
+            MyApplication.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    playCycle();
+                }
+            });
 
 
         }
-        
+
         songs = new ArrayList<>();
         fillMusicList();
 
@@ -89,11 +94,12 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        MyApplication.seekBar .setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        MyApplication.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 this.progress = progress;
+                seekBar.setProgress(progress);
             }
 
             @Override
@@ -104,9 +110,11 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mCurrentPosition = progress;
+
                 MyApplication.mediaPlayer.seekTo(progress);
             }
         });
+
 
 
     }
@@ -156,7 +164,10 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         super.onResume();
         if (MyApplication.mediaPlayer!=null){
                 seekBarParent.setVisibility(View.VISIBLE);
+                playCycle();
         }
+
+
     }
 
     @Override
@@ -186,22 +197,10 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         btn.setBackgroundResource(R.drawable.ic_pause_circular_button);
         Song song = songs.get(index);
         playMusicFile(song.getPath());
+
         int duration =MyApplication.mediaPlayer.getDuration();
         MyApplication.seekBar .setMax(duration);
-        final Handler handler = new Handler();
-//Make sure you update Seekbar on UI thread
-        MusicList.this.runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if(MyApplication.mediaPlayer != null){
-                    mCurrentPosition = MyApplication.mediaPlayer.getCurrentPosition() ;
-                    MyApplication.seekBar .setProgress(mCurrentPosition);
-                }
-                handler.postDelayed(this, 1000);
-            }
-        });
-
+        playCycle();
 
 
     }
@@ -209,6 +208,19 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         String[] temp = path.split("/");
         return temp[temp.length-1];
     }
+    public void playCycle(){
 
+        if (MyApplication.mediaPlayer.isPlaying()) {
+            MyApplication.seekBar.setProgress(MyApplication.mediaPlayer.getCurrentPosition());
+            runnable = new Runnable(){
+
+                @Override
+                public void run() {
+                    playCycle();
+                }
+            };
+            handler.postDelayed(runnable,1000);
+        }
+    }
 
 }
