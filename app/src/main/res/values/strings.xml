@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Zambi Music</string>
+    <string name="sort">sort</string>
+    <string name="sort_by_name">sort by name</string>
+    <string name="sort_by_date_modified">sort by date modified</string>
+    <string name="sort_by_date_added">sort by date added</string>
+    <string name="order">order</string>
+    <string name="ascending_order">ascending order</string>
+    <string name="descending_order">descending order</string>
 </resources>
