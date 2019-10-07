@@ -1,33 +1,36 @@
 package com.example.zambimusic;
 
 import android.content.Context;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static java.security.AccessController.getContext;
-
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
     private List<Song> songs;
     private Context context;
     private ItemClicked itemClicked;
+    private ItemLongClicked itemLongClicked;
 
     public SongAdapter( Context context,List<Song> songs) {
         this.context = context;
         itemClicked = (ItemClicked) context;
+        itemLongClicked = (ItemLongClicked) context;
         this.songs = songs;
 
+    }
+    public void setSongs(List<Song> songs) {
+        this.songs = songs;
     }
 
     @NonNull
@@ -36,6 +39,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view,parent,false);
         return new MyViewHolder(v);
+
     }
 
     @Override
@@ -56,14 +60,17 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         return songs.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvSong,tvArtists;
         private ImageView ivAlbumArt;
+        Button ivMenu;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSong = itemView.findViewById(R.id.tvSong);
             tvArtists = itemView.findViewById(R.id.tvArtist);
             ivAlbumArt = itemView.findViewById(R.id.ivAlbumArt);
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -71,11 +78,24 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
 
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    itemLongClicked.onLongItemClicked(songs.indexOf((Song) v.getTag()),v);
+                    return true;
+                }
+            });
         }
+
+
     }
 
     public interface ItemClicked{
         public void onItemClicked(int index);
     }
+    public interface ItemLongClicked{
+        public void onLongItemClicked(int index,View v);
+    }
+
 
 }

@@ -1,34 +1,32 @@
 package com.example.zambimusic;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked {
+public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked, SongAdapter.ItemLongClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    SongAdapter adapter;
     List<Song> songs;
     RecyclerView.LayoutManager layoutManager;
     LinearLayout seekBarParent;
@@ -56,7 +54,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         editor = sharedPreferences.edit();
 
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
         //setSupportActionBar(toolbar);
         Toast.makeText(this,"On create Running",Toast.LENGTH_SHORT).show();
         sortBy = sharedPreferences.getString("sortBy", MediaStore.MediaColumns.DATE_ADDED)+"";//get the data from storage
@@ -67,7 +65,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         textView = findViewById(R.id.tvName);
 
         songs = new ArrayList<>();
-        GetAllMediaMp3Files(sortBy);
+        ///GetAllMediaMp3Files(sortBy);
+        songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
         if (reversed){
             Collections.reverse(songs);
         }
@@ -77,6 +76,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+
 
     }
 
@@ -92,34 +92,34 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         switch (item.getItemId()) {
             case R.id.itemName:
 
-                GetAllMediaMp3Files(sortOrderByName);
+                songs = MainActivity.GetAllMediaMp3Files(sortOrderByName,this);
                 if (reversed){
                     Collections.reverse(songs);
                 }
-                adapter = new SongAdapter(this,songs);
-                recyclerView.setAdapter(adapter);
+                adapter.setSongs(songs);
+                adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DISPLAY_NAME);// save the state of sorting
                 editor.commit();
                 return true;
             case R.id.itemDateModified:
 
-                GetAllMediaMp3Files(sortOrderByDateModified);
+                songs = MainActivity.GetAllMediaMp3Files(sortOrderByDateModified,this);
                 if (reversed){
                     Collections.reverse(songs);
                 }
-                adapter = new SongAdapter(this,songs);
-                recyclerView.setAdapter(adapter);
+                adapter.setSongs(songs);
+                adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_MODIFIED);
                 editor.commit();
                 return true;
             case R.id.itemDateAdded:
 
-                GetAllMediaMp3Files(sortOrderByDateAdded);
+                songs = MainActivity.GetAllMediaMp3Files(sortOrderByDateAdded,this);
                 if (reversed){
                     Collections.reverse(songs);
                 }
-                adapter = new SongAdapter(this,songs);
-                recyclerView.setAdapter(adapter);
+                adapter.setSongs(songs);
+                adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_ADDED);
                 editor.commit();
                 return true;
@@ -129,8 +129,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     editor.putBoolean("reversed",false);// save the value on local storage like database
                     editor.commit();// must commit make changes
                     Collections.reverse(songs);
-                    adapter = new SongAdapter(this,songs);
-                    recyclerView.setAdapter(adapter);
+                    adapter.setSongs(songs);
+                    adapter.notifyDataSetChanged();
                 }
                 return true;
 
@@ -140,8 +140,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     editor.putBoolean("reversed",true);
                     editor.commit();
                     Collections.reverse(songs);
-                    adapter = new SongAdapter(this,songs);
-                    recyclerView.setAdapter(adapter);
+                    adapter.setSongs(songs);
+                    adapter.notifyDataSetChanged();
+
                 }
                 return  true;
 
@@ -152,82 +153,47 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     @Override
     public void onItemClicked(int index) {
-            textView.setText(songs.get(index).getDateModified());
+
+
     }
 
-    public void GetAllMediaMp3Files(String sortBy){
-        songs.clear();
-        ContentResolver contentResolver;
-        Cursor cursor;
-        Uri uri;
 
-        contentResolver = this.getContentResolver();
+    @Override
+    public void onClick(View v) {
 
-        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-        cursor = contentResolver.query(
-                uri, // Uri
-                null,
-                null,
-                null,
-                sortBy
-        );
-
-        if (cursor == null) {
-
-            Toast.makeText(this,"Something Went Wrong.", Toast.LENGTH_LONG);
-
-        } else if (!cursor.moveToFirst()) {
-
-            Toast.makeText(this,"No Music Found on SD Card.", Toast.LENGTH_LONG);
-
-        }
-        else {
-
-            int title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int artist = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int album = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int dateModified = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED);
-            int dateAdded = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED);
-            int album_id = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);// we can use this for get album art as define in Song class getUriAlbumArt() Method
-
-
-
-
-
-            //Getting Song ID From Cursor.
-            //int id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
-
-            do {
-
-                // You can also get the Song ID using cursor.getLong(id).
-                //long SongID = cursor.getLong(id);
-
-                String songTitle = cursor.getString(title);
-                String songAlbum = cursor.getString(album);
-                String songDateModified = cursor.getString(dateModified);
-                String songDateAdded = cursor.getString(dateAdded);
-                String songAtrists = cursor.getString(artist);
-                String songAbumId  = cursor.getString(album_id);
-                long parseLong = Long.parseLong(songAbumId);
-
-
-
-
-                // Adding Media File Names to ListElementsArrayList.
-                Song song = new Song();
-                song.setName(songTitle);
-                song.setAlbum(songAlbum);
-                song.setDateAdded(songDateAdded);
-                song.setDateModified(songDateModified);
-                song.setArtists(songAtrists);
-                song.setAlbumId(parseLong);
-
-
-                songs.add(song);
-
-            } while (cursor.moveToNext());
-        }
     }
 
+    private Long  TempAlbumID;
+    @Override
+    public void onLongItemClicked(int index,View v) {
+        PopupMenu popupMenu = new PopupMenu(this,v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.pop_up_song_menu);
+        popupMenu.show();
+
+        TempAlbumID = songs.get(index).getAlbumId();
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.itemAlbum:
+                Intent intent = new Intent(MusicList.this,AlbumActivity.class);
+                ArrayList<Song> albumSongs = new ArrayList<>() ;
+                for(Song song:songs){
+                    if (song.getAlbumId() == TempAlbumID)
+                        albumSongs.add(song);
+                }
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("albumSongs",albumSongs);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                return true;
+
+        }
+        return false;
+    }
 }
+
+

@@ -2,8 +2,12 @@ package com.example.zambimusic;
 
 import android.content.ContentUris;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Song implements Comparable<Song> {
+import java.io.Serializable;
+
+public class Song implements Comparable<Song> , Parcelable, Serializable {
 
 
     private String name;
@@ -12,8 +16,44 @@ public class Song implements Comparable<Song> {
     private String artists;
     private String dateModified;
     private String dateAdded;
+
+    public String getComposer() {
+        return composer;
+    }
+
+    public void setComposer(String composer) {
+        this.composer = composer;
+    }
+
+    private String composer;
     private long albumId;
 
+    public Song() {
+    }
+
+    protected Song(Parcel in) {
+        name = in.readString();
+        path = in.readString();
+        album = in.readString();
+        artists = in.readString();
+        dateModified = in.readString();
+        dateAdded = in.readString();
+        albumId = in.readLong();
+        duration = in.readString();
+        composer = in.readString();
+    }
+
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
 
     public void setAlbumId(long albumId) {
         this.albumId = albumId;
@@ -99,5 +139,23 @@ public class Song implements Comparable<Song> {
         if (getName() == null || o.getName() == null)
             return 0;
         return  getName().compareTo(o.getName());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(path);
+        dest.writeString(album);
+        dest.writeString(artists);
+        dest.writeString(dateModified);
+        dest.writeString(dateAdded);
+        dest.writeLong(albumId);
+        dest.writeString(duration);
+        dest.writeString(composer);
     }
 }

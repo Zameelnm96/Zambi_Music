@@ -1,20 +1,17 @@
 package com.example.zambimusic;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.karumi.dexter.Dexter;
@@ -23,6 +20,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.ArrayList;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -46,8 +47,12 @@ public class MainActivity extends AppCompatActivity{
                 Intent intent= new Intent(MainActivity.this,MusicList.class);
                 startActivity(intent);
 
+
             }
         });
+
+
+
     }
 
 
@@ -112,6 +117,89 @@ public class MainActivity extends AppCompatActivity{
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    public static ArrayList<Song> GetAllMediaMp3Files(String sortBy,  Context context){
+        ArrayList<Song> songs = new ArrayList<>();
+        ContentResolver contentResolver;
+        Cursor cursor;
+        Uri uri;
+
+        contentResolver = context.getContentResolver();
+
+        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+
+        cursor = contentResolver.query(
+                uri, // Uri
+                null,
+                null,
+                null,
+                sortBy
+        );
+
+        if (cursor == null) {
+
+            Toast.makeText(context,"Something Went Wrong.", Toast.LENGTH_LONG);
+
+        } else if (!cursor.moveToFirst()) {
+
+            Toast.makeText(context,"No Music Found on SD Card.", Toast.LENGTH_LONG);
+
+        }
+        else {
+
+            int title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int artist = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int album = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int composer = cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER);
+            int dateModified = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED);
+            int dateAdded = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED);
+            int album_id = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);// we can use this for get album art as define in Song class getUriAlbumArt() Method
+
+            int duration = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+
+
+
+
+
+            //Getting Song ID From Cursor.
+            //int id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
+
+            do {
+
+                // You can also get the Song ID using cursor.getLong(id).
+                //long SongID = cursor.getLong(id);
+
+                String songTitle = cursor.getString(title);
+                String songAlbum = cursor.getString(album);
+                String songComposer = cursor.getString(composer);
+                String songDateModified = cursor.getString(dateModified);
+                String songDateAdded = cursor.getString(dateAdded);
+                String songAtrists = cursor.getString(artist);
+                String songAbumId  = cursor.getString(album_id);
+                String songDuration = cursor.getString(duration);
+                long parseLong = Long.parseLong(songAbumId);
+
+
+
+
+                // Adding Media File Names to ListElementsArrayList.
+                Song song = new Song();
+                song.setName(songTitle);
+                song.setAlbum(songAlbum);
+                song.setComposer(songComposer);
+                song.setDateAdded(songDateAdded);
+                song.setDateModified(songDateModified);
+                song.setArtists(songAtrists);
+                song.setAlbumId(parseLong);
+
+
+                songs.add(song);
+
+            } while (cursor.moveToNext());
+        }
+        return songs;
+    }
+
 
 
 }

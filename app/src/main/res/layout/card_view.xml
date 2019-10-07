@@ -8,46 +8,93 @@
     card_view:cardElevation="4dp"
     card_view:cardCornerRadius="3dp"
     android:layout_marginTop="5dp">
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="99dp"
+        android:orientation="horizontal"><![CDATA[
+
+
+        android:layout_width="274dp"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ]]>
 
         <ImageView
             android:id="@+id/ivAlbumArt"
-            android:layout_width="61dp"
-            android:layout_height="61dp"
-            android:layout_marginLeft="5dp"
+            android:layout_width="46dp"
+            android:layout_height="56dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="9dp"
+            android:layout_marginTop="11dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginBottom="32dp" />
 
-            <TextView
-                android:id="@+id/tvSong"
-                android:layout_width="match_parent"
-                android:layout_height="19sp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="20dp"
-                android:gravity="center_vertical"
-                android:text="this is for song name"
-                android:textSize="17sp" />
+        <TextView
+            android:id="@+id/tvSong"
+            android:layout_width="325dp"
+            android:layout_height="18sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginBottom="17dp"
+            android:layout_toEndOf="@+id/ivAlbumArt"
+            android:layout_toRightOf="@+id/ivAlbumArt"
+            android:gravity="top"
+            android:text="this is for song name"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tvArtist"
-                android:layout_width="match_parent"
-                android:layout_height="15sp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:text="this is for artist name"
-                android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvArtist"
+            android:layout_width="343dp"
+            android:layout_height="15sp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="9dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginBottom="40dp"
+            android:layout_toEndOf="@+id/ivAlbumArt"
+            android:layout_toRightOf="@+id/ivAlbumArt"
+            android:gravity="center_vertical"
+            android:text="this is for artist name"
+            android:textSize="12sp" />
 
-
-        </LinearLayout>
-
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
