@@ -1,7 +1,6 @@
 package com.example.zambimusic;
 
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSong = itemView.findViewById(R.id.tvSong);
-            tvArtists = itemView.findViewById(R.id.tvArtist);
+            tvArtists = itemView.findViewById(R.id.tvPlayArtist);
             ivAlbumArt = itemView.findViewById(R.id.ivAlbumArt);
 
 

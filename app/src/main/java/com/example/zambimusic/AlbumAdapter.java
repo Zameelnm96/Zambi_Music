@@ -46,7 +46,7 @@ public class AlbumAdapter  extends RecyclerView.Adapter<AlbumAdapter.MyViewHolde
             super(itemView);
             tvNumber = itemView.findViewById(R.id.tvNumber);
             tvName = itemView.findViewById(R.id.tvName);
-            tvArtist = itemView.findViewById(R.id.tvArtist);
+            tvArtist = itemView.findViewById(R.id.tvPlayArtist);
 
         }
     }

@@ -34,7 +34,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/tvArtist"
+            android:id="@+id/tvPlayArtist"
             android:layout_width="275dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvName"

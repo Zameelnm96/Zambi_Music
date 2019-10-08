@@ -22,25 +22,32 @@
 
         <LinearLayout
             android:layout_width="199dp"
-            android:layout_height="75dp"
+            android:layout_height="match_parent"
             android:layout_weight="9"
             android:orientation="vertical"
             android:paddingLeft="4dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tvPlayNmae"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
                 android:text="TextView"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/tvPlayArtist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tvPlayAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="TextView" />
         </LinearLayout>
 
@@ -58,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:background="@android:color/transparent"
-            android:gravity="center_horizontal|center_vertical"
+            android:gravity="center_horizontal"
             android:text="@string/ThreeDot"
             android:textSize="20sp" />
 
@@ -107,7 +114,7 @@
                 android:text="previous" />
 
             <Button
-
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:id="@+id/btnPlay"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -116,6 +123,7 @@
                 android:layout_marginRight="25dp"
                 android:layout_marginBottom="15dp"
                 android:layout_weight="1"
+
                 android:background="@android:color/transparent" />
 
             <Button

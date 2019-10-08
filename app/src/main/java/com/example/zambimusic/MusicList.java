@@ -3,6 +3,7 @@ package com.example.zambimusic;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -154,6 +155,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     public void onItemClicked(int index) {
         Intent intent = new Intent(this,PlayActivity.class);
+        intent.putExtra("song",(Parcelable) songs.get(index));
         startActivity(intent);
 
     }
