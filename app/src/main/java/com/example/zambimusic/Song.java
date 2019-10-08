@@ -4,18 +4,28 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 
 import java.io.Serializable;
 
 public class Song implements Comparable<Song> , Parcelable, Serializable {
 
 
+    long id;
     private String name;
     private String path;
     private String album;
     private String artists;
     private String dateModified;
     private String dateAdded;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getComposer() {
         return composer;
@@ -65,6 +75,10 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
 
     public Uri getUriAlbumArt(long albumId) {
         return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId); // return the uri of album art.
+    }
+
+    public Uri getUri(){
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, getId());
     }
 
 

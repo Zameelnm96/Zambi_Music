@@ -1,11 +1,16 @@
 package com.example.zambimusic;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked, SongAdapter.ItemLongClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
     RecyclerView recyclerView;
     SongAdapter adapter;
-    List<Song> songs;
+    ArrayList<Song> songs;
     RecyclerView.LayoutManager layoutManager;
     LinearLayout seekBarParent;
     Button btn;
@@ -46,10 +51,17 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     TextView textView ;
 
+    ServiceConnection serviceConnection;
+    PlayService playService;
+    Intent playServiceIntent;
+    private boolean isBounded = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
+
+        playServiceIntent = new Intent(getApplicationContext(),PlayService.class);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPreferences.edit();
@@ -151,9 +163,21 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
         return super.onOptionsItemSelected(item);
     }
-
+    int position;
     @Override
     public void onItemClicked(int index) {
+        Log.d("testing", "onItemClicked: " + songs.get(index).getId());
+        position = index;
+        if (isBounded){
+            Log.d("testing", "onItemClicked: running ");
+            unbindService();
+            if (playServiceIntent != null)
+                stopService(playServiceIntent);
+        }
+
+        bindService();
+        startService(playServiceIntent);
+
         Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("song",(Parcelable) songs.get(index));
         startActivity(intent);
@@ -196,6 +220,37 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
         }
         return false;
+    }
+
+    private void bindService(){
+        if (serviceConnection == null){
+            serviceConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+                    playService = myBinder.getService();
+                    playService.setList(songs);
+                    Log.d("testing", "onServiceConnected: " + position);
+                    playService.setPosition(position);
+                    playService.setSong();
+                    playService.playSong();
+                    isBounded = true;
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    isBounded = false;
+                }
+            };
+        }
+
+        bindService(playServiceIntent,serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+    private void unbindService(){
+        if(isBounded){
+            unbindService(serviceConnection);
+            isBounded=false;
+        }
     }
 }
 

@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity{
 
                 // You can also get the Song ID using cursor.getLong(id).
                 //long SongID = cursor.getLong(id);
-
+                long   SongId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String songTitle = cursor.getString(title);
                 String songAlbum = cursor.getString(album);
                 String songComposer = cursor.getString(composer);
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity{
                 song.setDateModified(songDateModified);
                 song.setArtists(songAtrists);
                 song.setAlbumId(parseLong);
-
+                song.setId(SongId);
 
                 songs.add(song);
 
