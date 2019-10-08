@@ -153,7 +153,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     @Override
     public void onItemClicked(int index) {
-
+        Intent intent = new Intent(this,PlayActivity.class);
+        startActivity(intent);
 
     }
 

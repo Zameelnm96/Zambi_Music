@@ -7,4 +7,5 @@
     <string name="order">order</string>
     <string name="ascending_order">ascending order</string>
     <string name="descending_order">descending order</string>
+    <string name="ThreeDot">⋮</string>
 </resources>

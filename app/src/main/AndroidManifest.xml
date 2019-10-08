@@ -13,10 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".AlbumActivity"
-            android:theme="@style/AlbumViewTheme"
-            android:fitsSystemWindows="true"/>
-
+        <activity android:name=".PlayActivity"></activity>
+        <activity
+            android:name=".AlbumActivity"
+            android:fitsSystemWindows="true"
+            android:theme="@style/AlbumViewTheme" />
         <activity
             android:name=".MusicList"
             android:theme="@style/MusicListTheme" />
