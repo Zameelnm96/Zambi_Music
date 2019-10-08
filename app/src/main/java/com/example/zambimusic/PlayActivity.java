@@ -29,7 +29,7 @@ public class PlayActivity extends AppCompatActivity {
         btnPrevious = findViewById(R.id.btnPrevious);
         btnNext = findViewById(R.id.btnNext);
 
-        Spannable buttonLabel = new SpannableString(" ");
+        /*Spannable buttonLabel = new SpannableString(" ");
         buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.ic_play_button,
                 ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         btnPlay.setText(buttonLabel);
@@ -38,8 +38,9 @@ public class PlayActivity extends AppCompatActivity {
         btnPrevious.setText(buttonLabel);
         buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.ic_right_chevron,
                 ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        btnNext.setText(buttonLabel);
+        btnNext.setText(buttonLabel);*/
         ivAlbumArt = findViewById(R.id.ivAlbumArt);
+        btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
         Picasso.get().load(R.drawable.album).fit().into(ivAlbumArt);
 
 
