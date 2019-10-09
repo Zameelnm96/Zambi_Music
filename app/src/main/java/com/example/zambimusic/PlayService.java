@@ -26,7 +26,7 @@ public class PlayService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-
+        Log.d("testing", "onUnbind: running");
         if (mediaPlayer != null){
             if (mediaPlayer.isPlaying()){
                 mediaPlayer.stop();
@@ -56,7 +56,8 @@ public class PlayService extends Service {
     }
 
     public void setSong(){
-        Log.d("testing", "setSong: " + position);
+        Log.d("testing", "setSong:" +songs.get(position).getName());
+
         Song song = null;
         Uri uri = null;
         if (songs!=null){
@@ -80,6 +81,17 @@ public class PlayService extends Service {
         mediaPlayer.start();
     }
 
+    public void togglePlay(){
+        if (mediaPlayer != null){
+            if (mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+            }
+            else {
+                mediaPlayer.start();
+            }
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -87,12 +99,18 @@ public class PlayService extends Service {
         return START_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("testing", "onDestroy: Playservice");
+    }
+
     class MyBinder  extends Binder{
         public PlayService getService(){
             return PlayService.this;
         }
     }
-    private IBinder myBinder = new MyBinder();
+    private MyBinder myBinder = new MyBinder();
 
 }
 

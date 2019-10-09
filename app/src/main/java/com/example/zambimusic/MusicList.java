@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -30,7 +31,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+
+
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked, SongAdapter.ItemLongClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
+
     RecyclerView recyclerView;
     SongAdapter adapter;
     ArrayList<Song> songs;
@@ -51,17 +56,14 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     TextView textView ;
 
-    ServiceConnection serviceConnection;
-    PlayService playService;
-    Intent playServiceIntent;
-    private boolean isBounded = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_list);
 
-        playServiceIntent = new Intent(getApplicationContext(),PlayService.class);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPreferences.edit();
@@ -98,6 +100,12 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_music_list, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //bindService();
     }
 
     @Override
@@ -163,20 +171,15 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
         return super.onOptionsItemSelected(item);
     }
-    int position;
+
     @Override
     public void onItemClicked(int index) {
-        Log.d("testing", "onItemClicked: " + songs.get(index).getId());
-        position = index;
-        if (isBounded){
-            Log.d("testing", "onItemClicked: running ");
-            unbindService();
-            if (playServiceIntent != null)
-                stopService(playServiceIntent);
-        }
 
-        bindService();
-        startService(playServiceIntent);
+       /* Intent i = new Intent(this,PlayActivity.class);
+        i.putExtra("index",index);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("songs",songs);
+        i.putExtras(bundle);*/
 
         Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("song",(Parcelable) songs.get(index));
@@ -222,36 +225,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         return false;
     }
 
-    private void bindService(){
-        if (serviceConnection == null){
-            serviceConnection = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName name, IBinder service) {
-                    PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
-                    playService = myBinder.getService();
-                    playService.setList(songs);
-                    Log.d("testing", "onServiceConnected: " + position);
-                    playService.setPosition(position);
-                    playService.setSong();
-                    playService.playSong();
-                    isBounded = true;
-                }
 
-                @Override
-                public void onServiceDisconnected(ComponentName name) {
-                    isBounded = false;
-                }
-            };
-        }
-
-        bindService(playServiceIntent,serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-    private void unbindService(){
-        if(isBounded){
-            unbindService(serviceConnection);
-            isBounded=false;
-        }
-    }
 }
 
 

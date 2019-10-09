@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".PlayActivity"></activity>
+        <activity android:name=".AlbumListActivity"></activity>
+        <activity android:name=".PlayActivity" />
         <activity
             android:name=".AlbumActivity"
             android:fitsSystemWindows="true"
@@ -28,7 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".PlayService"/>
+
+        <service android:name=".PlayService" />
     </application>
 
 </manifest>
