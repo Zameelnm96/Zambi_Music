@@ -5,13 +5,18 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.Serializable;
 
-public class Song implements Comparable<Song> , Parcelable, Serializable {
+public class Song implements Comparable<Song> ,Parcelable, Serializable {//
 
+    public void setId(long id) {
+        this.id = id;
 
-    long id;
+    }
+
+    private long id;
     private String name;
     private String path;
     private String album;
@@ -23,9 +28,7 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+
 
     public String getComposer() {
         return composer;
@@ -38,8 +41,14 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
     private String composer;
     private long albumId;
 
-    public Song() {
+    public Song(long _id) {
+        if (_id == 0){
+            int x = 2;
+        }
+        Log.d("Constructo_c", "getId: " + _id);
+        this.id = _id;
     }
+
 
     protected Song(Parcel in) {
         name = in.readString();
@@ -51,6 +60,7 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
         albumId = in.readLong();
         duration = in.readString();
         composer = in.readString();
+        id = in.readLong();
     }
 
     public static final Creator<Song> CREATOR = new Creator<Song>() {
@@ -78,7 +88,7 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
     }
 
     public Uri getUri(){
-        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, getId());
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
     }
 
 
@@ -171,5 +181,7 @@ public class Song implements Comparable<Song> , Parcelable, Serializable {
         dest.writeLong(albumId);
         dest.writeString(duration);
         dest.writeString(composer);
+        dest.writeLong(id);
     }
+
 }

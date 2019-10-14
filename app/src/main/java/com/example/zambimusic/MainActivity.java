@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-    Button btnSongs;
+    Button btnSongs,btnAlbum;
 
 
 
@@ -38,9 +39,18 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Intent playIntent = new Intent(this,PlayService.class);
+        startService(playIntent);
         requestRuntimePermision();
         btnSongs = findViewById(R.id.btnSongs);
+        btnAlbum = findViewById(R.id.btnAlbum);
+        btnAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,AlbumListActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         btnSongs.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +180,8 @@ public class MainActivity extends AppCompatActivity{
 
                 // You can also get the Song ID using cursor.getLong(id).
                 //long SongID = cursor.getLong(id);
-                long   SongId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+                long SongId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
+                Log.d("xyz", "GetAllMediaMp3Files: id " + SongId);
                 String songTitle = cursor.getString(title);
                 String songAlbum = cursor.getString(album);
                 String songComposer = cursor.getString(composer);
@@ -185,7 +196,8 @@ public class MainActivity extends AppCompatActivity{
 
 
                 // Adding Media File Names to ListElementsArrayList.
-                Song song = new Song();
+                Song song = new Song(SongId);
+
                 song.setName(songTitle);
                 song.setAlbum(songAlbum);
                 song.setComposer(songComposer);
@@ -193,8 +205,6 @@ public class MainActivity extends AppCompatActivity{
                 song.setDateModified(songDateModified);
                 song.setArtists(songAtrists);
                 song.setAlbumId(parseLong);
-                song.setId(SongId);
-
                 songs.add(song);
 
             } while (cursor.moveToNext());

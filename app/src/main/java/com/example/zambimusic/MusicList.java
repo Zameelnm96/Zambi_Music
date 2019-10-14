@@ -175,14 +175,14 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     public void onItemClicked(int index) {
 
-       /* Intent i = new Intent(this,PlayActivity.class);
-        i.putExtra("index",index);
+        Intent intent = new Intent(this,PlayActivity.class);
+        intent.putExtra("index",index);
         Bundle bundle = new Bundle();
         bundle.putSerializable("songs",songs);
-        i.putExtras(bundle);*/
+        intent.putExtras(bundle);
 
-        Intent intent = new Intent(this,PlayActivity.class);
-        intent.putExtra("song",(Parcelable) songs.get(index));
+        /*Intent intent = new Intent(this,PlayActivity.class);
+        intent.putExtra("song",(Parcelable) songs.get(index));*/
         startActivity(intent);
 
     }
