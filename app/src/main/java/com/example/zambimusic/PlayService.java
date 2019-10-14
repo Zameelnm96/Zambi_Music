@@ -26,6 +26,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     public interface ServiceCallback{
         public void callSetView(Song song);
         public void updateSeekbar();
+        public void refresh();
     }
 
     public void setServiceCallback(ServiceCallback serviceCallback) {
@@ -53,6 +54,10 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         return super.onUnbind(intent);
     }
 
+    @Override
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
+    }
 
     @Override
     public void onCreate() {
@@ -118,7 +123,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            serviceCallback.callSetView(songs.get(position));
+            //serviceCallback.callSetView(songs.get(position));
             mediaPlayer.prepareAsync();
             return;
         }
@@ -127,7 +132,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         } catch (IOException e) {
             e.printStackTrace();
         }
-        serviceCallback.callSetView(songs.get(position));
+        /*serviceCallback.callSetView(songs.get(position));*/
         mediaPlayer.prepareAsync();
 
 
@@ -146,7 +151,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                serviceCallback.callSetView(songs.get(position));
+                //serviceCallback.callSetView(songs.get(position));
                 mediaPlayer.prepareAsync();
                 return;
 
@@ -156,7 +161,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            serviceCallback.callSetView(songs.get(position));
+            /*serviceCallback.callSetView(songs.get(position));*/
             mediaPlayer.prepareAsync();
 
 
@@ -190,7 +195,9 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
             setOnclickLisner = true;
 
         }
+        serviceCallback.callSetView(songs.get(position));
         serviceCallback.updateSeekbar();
+
     }
 
     @Override
@@ -214,6 +221,8 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         }
     }
     private MyBinder myBinder = new MyBinder();
-
+    public Song getSong(){
+        return songs.get(position);
+    }
 }
 

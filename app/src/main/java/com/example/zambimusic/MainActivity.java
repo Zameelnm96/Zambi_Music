@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-    Button btnSongs,btnAlbum;
+    Button btnSongs,btnAlbum,btnNowPlaying;
 
 
 
@@ -41,18 +41,11 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         Intent playIntent = new Intent(this,PlayService.class);
         startService(playIntent);
+
         requestRuntimePermision();
         btnSongs = findViewById(R.id.btnSongs);
         btnAlbum = findViewById(R.id.btnAlbum);
-        btnAlbum.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,AlbumListActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
+        btnNowPlaying = findViewById(R.id.btnNowPlaying);
         btnSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +55,23 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
+
+        btnAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,AlbumListActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnNowPlaying.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(MainActivity.this,PlayActivity.class);
+                intent.putExtra("class name","MainActivity");
+                startActivity(intent);
+            }
+        });
+
 
 
 

@@ -33,6 +33,20 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     int position;
     Intent playIntent;
     Handler handler =new Handler();
+    ServiceConnection serviceConnection2 = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+            playService = myBinder.getService();
+            setView(playService.getSong());
+            updateSeekbar();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -93,13 +107,23 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
 
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
 
-        songs =(ArrayList<Song>) bundle.getSerializable("songs");
-        position = intent.getIntExtra("index",0);
-        Song song = songs.get(position);
-        playIntent = new Intent(this,PlayService.class);
-        bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+       if (intent.getStringExtra("class name").equalsIgnoreCase("MusicList")){
+           Log.d("testing", "onCreate: music list class");
+           Bundle bundle = intent.getExtras();
+           songs =(ArrayList<Song>) bundle.getSerializable("songs");
+           position = intent.getIntExtra("index",0);
+           Song song = songs.get(position);
+           setView(song);
+           playIntent = new Intent(this,PlayService.class);
+           bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+       }
+       else{
+           playIntent = new Intent(this,PlayService.class);
+           bindService(playIntent,serviceConnection2,Context.BIND_AUTO_CREATE);
+       }
+
+
 
 
         /*Song song = intent.getParcelableExtra("song");*/
@@ -120,7 +144,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
 
 
-        setView(song);
+
 
     }
 
@@ -129,6 +153,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onBackPressed();
     }
     private void setView(Song song){
+
         Picasso.get().load(song.getUriAlbumArt(song.getAlbumId())).error(R.drawable.album).fit().into(ivAlbumArt);
 
         if(song.getName()!=null){
@@ -175,7 +200,10 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void callSetView(Song song) {
+
         setView(song);
+
+
     }
 
     @Override
@@ -193,6 +221,14 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             }
         });
 
+
+    }
+
+    @Override
+    public void refresh() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
 

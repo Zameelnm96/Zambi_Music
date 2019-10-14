@@ -180,6 +180,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         Bundle bundle = new Bundle();
         bundle.putSerializable("songs",songs);
         intent.putExtras(bundle);
+        intent.putExtra("class name","MusicList");
 
         /*Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("song",(Parcelable) songs.get(index));*/
