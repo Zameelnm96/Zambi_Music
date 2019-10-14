@@ -51,7 +51,8 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
             }
             mediaPlayer.reset();
         }*/
-        return super.onUnbind(intent);
+        //return super.onUnbind(intent);
+        return true;
     }
 
     @Override
@@ -223,6 +224,12 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     private MyBinder myBinder = new MyBinder();
     public Song getSong(){
         return songs.get(position);
+    }
+    public void addToPlayNext(Song song){
+        songs.add(position+1,song);
+    }
+    public void addToPlaynext(ArrayList<Song> songs){
+
     }
 }
 

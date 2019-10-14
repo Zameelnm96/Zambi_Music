@@ -1,6 +1,8 @@
 package com.example.zambimusic;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.view.GestureDetector;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,9 +35,12 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     int position;
     Intent playIntent;
     Handler handler =new Handler();
+    boolean isServiceConnection2Set,isServiceConnectionSet = false;
     ServiceConnection serviceConnection2 = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            isServiceConnection2Set = true;
+            isServiceConnectionSet = false;
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
             setView(playService.getSong());
@@ -44,15 +49,16 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            isServiceConnection2Set = false;
         }
     };
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            isServiceConnectionSet = true;
+            isServiceConnection2Set = false;
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
-            playService.setList(songs);
             playService.setPosition(position);
             playService.setSong();
             playService.setServiceCallback(PlayActivity.this);
@@ -61,12 +67,14 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            isServiceConnectionSet = false;
             isBounded = false;
         }
     };
 
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onSwipeLeft() {
                 playService.playNext();
+
             }
 
             @Override
@@ -102,7 +111,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
             @Override
             public void onSwipeBottom() {
-
+                refresh();
             }
         });
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +133,6 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onClick(View v) {
 
                 playService.playPrevious();
-
             }
         });
 
@@ -182,6 +190,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
     }
     private void setView(Song song){
 
@@ -260,6 +269,19 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         Intent intent = getIntent();
         finish();
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if ( isServiceConnection2Set){
+            unbindService(serviceConnection2);
+        }
+        if ( isServiceConnectionSet){
+            unbindService(serviceConnection);
+
+        }
+
     }
 
 

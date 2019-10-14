@@ -42,7 +42,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     RecyclerView.LayoutManager layoutManager;
     LinearLayout seekBarParent;
     Button btn;
-
+    PlayService playService;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -55,8 +55,19 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     private boolean reversed;
 
     TextView textView ;
+    private ServiceConnection serviceConnection= new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+            playService = myBinder.getService();
+            playService.setList(songs);
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
 
+        }
+    };
 
 
     @Override
@@ -93,6 +104,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         recyclerView.setHasFixedSize(true);
 
 
+
     }
 
     @Override
@@ -105,7 +117,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //bindService();
+        unbindService(serviceConnection);
     }
 
     @Override
@@ -175,6 +187,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     public void onItemClicked(int index) {
 
+        Intent playIntent = new Intent(this,PlayService.class);
+        bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+
         Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("index",index);
         Bundle bundle = new Bundle();
@@ -184,7 +199,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
         /*Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("song",(Parcelable) songs.get(index));*/
+
         startActivity(intent);
+
 
     }
 
