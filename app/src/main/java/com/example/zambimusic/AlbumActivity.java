@@ -40,6 +40,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
             playService.setSong();
             playService.setServiceCallback(AlbumActivity.this);
             isBounded = true;
+            unbindService(this);
         }
 
         @Override
@@ -93,6 +94,8 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
     @Override
     public void onItemClicked(int index) {
         position = index;
+        Intent playIntent = new Intent(this,PlayService.class);
+        bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
         Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("index",index);
         Bundle bundle = new Bundle();
@@ -100,6 +103,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
         intent.putExtras(bundle);
         intent.putExtra("class name","AlbumActivity");
         startActivity(intent);
+
     }
 
     @Override

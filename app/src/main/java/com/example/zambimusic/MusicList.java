@@ -53,6 +53,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     private String sortBy;
     private boolean reversed;
+    int position;
 
     TextView textView ;
     private ServiceConnection serviceConnection= new ServiceConnection() {
@@ -61,6 +62,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
             playService.setList(songs);
+            playService.setPosition(position);
+            playService.setSong();
+            unbindService(this);
         }
 
         @Override
@@ -117,7 +121,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(serviceConnection);
+
     }
 
     @Override
@@ -186,7 +190,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     @Override
     public void onItemClicked(int index) {
-
+        position = index;
         Intent playIntent = new Intent(this,PlayService.class);
         bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
 
@@ -201,6 +205,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         intent.putExtra("song",(Parcelable) songs.get(index));*/
 
         startActivity(intent);
+        //finish();
 
 
     }

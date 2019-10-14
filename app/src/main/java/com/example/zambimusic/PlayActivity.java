@@ -59,8 +59,10 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             isServiceConnection2Set = false;
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
-            playService.setPosition(position);
-            playService.setSong();
+            /*playService.setPosition(position);
+            playService.setSong();*/
+            setView(playService.getSong());
+            updateSeekbar();
             playService.setServiceCallback(PlayActivity.this);
             isBounded = true;
         }
@@ -144,7 +146,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
            songs =(ArrayList<Song>) bundle.getSerializable("songs");
            position = intent.getIntExtra("index",0);
            Song song = songs.get(position);
-           setView(song);
+           //setView(song);
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
        }
@@ -153,7 +155,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
            songs =(ArrayList<Song>) bundle.getSerializable("songs");
            position = intent.getIntExtra("index",0);
            Song song = songs.get(position);
-           setView(song);
+          // setView(song);
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
        }

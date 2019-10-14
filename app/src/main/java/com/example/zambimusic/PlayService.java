@@ -196,8 +196,10 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
             setOnclickLisner = true;
 
         }
-        serviceCallback.callSetView(songs.get(position));
-        serviceCallback.updateSeekbar();
+        if (serviceCallback!= null) {
+            serviceCallback.callSetView(songs.get(position));
+            serviceCallback.updateSeekbar();
+        }
 
     }
 
@@ -231,5 +233,14 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     public void addToPlaynext(ArrayList<Song> songs){
 
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
+
 }
 
