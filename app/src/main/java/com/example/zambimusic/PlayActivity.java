@@ -1,7 +1,7 @@
 package com.example.zambimusic;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.view.GestureDetector;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -70,6 +70,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_play);
         tvName = findViewById(R.id.tvPlayNmae);
         tvArtist = findViewById(R.id.tvPlayArtist);
@@ -83,6 +84,27 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = findViewById(R.id.seekbarPlayActivity);
         seekBar.setOnSeekBarChangeListener(this);
         btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
+        ivAlbumArt.setOnTouchListener(new OnSwipeTouchListener() {
+            @Override
+            public void onSwipeRight() {
+                playService.playPrevious();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                playService.playNext();
+            }
+
+            @Override
+            public void onSwipeTop() {
+
+            }
+
+            @Override
+            public void onSwipeBottom() {
+
+            }
+        });
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +140,16 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
        }
-       else{
+       else if (intent.getStringExtra("class name").equalsIgnoreCase("AlbumActivity")){
+           Bundle bundle = intent.getExtras();
+           songs =(ArrayList<Song>) bundle.getSerializable("songs");
+           position = intent.getIntExtra("index",0);
+           Song song = songs.get(position);
+           setView(song);
+           playIntent = new Intent(this,PlayService.class);
+           bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+       }
+       else if (intent.getStringExtra("class name").equalsIgnoreCase("MainActivity")){
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection2,Context.BIND_AUTO_CREATE);
        }

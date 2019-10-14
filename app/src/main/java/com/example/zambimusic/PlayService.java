@@ -138,7 +138,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
 
     }
     public void playPrevious(){
-        if (mediaPlayer.getDuration()<5000){
+        if (mediaPlayer.getCurrentPosition()>3000){
             mediaPlayer.seekTo(0);
         }
         else{

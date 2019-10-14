@@ -1,5 +1,6 @@
 package com.example.zambimusic;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class AlbumAdapter  extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder>{
     ArrayList<Song> albumSongs;
-    public AlbumAdapter(ArrayList<Song> albumSongs) {
+    Context context;
+    ItemClicked itemClicked;
+    public AlbumAdapter(Context context, ArrayList<Song> albumSongs) {
         this.albumSongs = albumSongs;
+        this.context = context;
+        itemClicked = (ItemClicked) context;
     }
 
 
@@ -27,7 +32,7 @@ public class AlbumAdapter  extends RecyclerView.Adapter<AlbumAdapter.MyViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
+        holder.itemView.setTag(position);
         String count = Integer.toString(position + 1);
         holder.tvNumber.setText( count );
         holder.tvName.setText(albumSongs.get(position).getName());
@@ -47,7 +52,15 @@ public class AlbumAdapter  extends RecyclerView.Adapter<AlbumAdapter.MyViewHolde
             tvNumber = itemView.findViewById(R.id.tvNumber);
             tvName = itemView.findViewById(R.id.tvName);
             tvArtist = itemView.findViewById(R.id.tvPlayArtist);
-
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClicked.onItemClicked((int)v.getTag());
+                }
+            });
         }
+    }
+    public interface ItemClicked{
+        public void onItemClicked(int index);
     }
 }
