@@ -21,6 +21,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
     private ItemClicked itemClicked;
     private ItemLongClicked itemLongClicked;
 
+
+
     public SongAdapter( Context context,List<Song> songs) {
         this.context = context;
         itemClicked = (ItemClicked) context;

@@ -1,12 +1,15 @@
 package com.example.zambimusic;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.SeekBar;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +21,11 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     ArrayList<Song> songs;
     int position;
     ServiceCallback serviceCallback;
+    boolean setOnclickLisner = false;
 
     public interface ServiceCallback{
         public void callSetView(Song song);
+        public void updateSeekbar();
     }
 
     public void setServiceCallback(ServiceCallback serviceCallback) {
@@ -54,7 +59,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         super.onCreate();
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnPreparedListener(this);
-        mediaPlayer.setOnCompletionListener(this);
+
 
     }
 
@@ -180,16 +185,23 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+        if (!setOnclickLisner) {
+            mediaPlayer.setOnCompletionListener(this);
+            setOnclickLisner = true;
+
+        }
+        serviceCallback.updateSeekbar();
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (position < songs.size()-1){
-            playNext();
-        }
-        else{
-            position = 0;
-        }
+
+            if (position < songs.size() - 1) {
+                playNext();
+            } else {
+                position = 0;
+            }
+
 
     }
     public MediaPlayer getMediaPlayer(){

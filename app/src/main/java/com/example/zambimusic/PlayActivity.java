@@ -32,6 +32,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     boolean isBounded;
     int position;
     Intent playIntent;
+    Handler handler =new Handler();
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -41,20 +42,6 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             playService.setPosition(position);
             playService.setSong();
             playService.setServiceCallback(PlayActivity.this);
-            seekBar.setMax(playService.getMediaPlayer().getDuration());
-            final Handler mHandler = new Handler();
-//Make sure you update Seekbar on UI thread
-            PlayActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(playService.getMediaPlayer() != null){
-                        int mCurrentPosition = playService.getMediaPlayer() .getCurrentPosition() ;
-                        seekBar.setProgress(mCurrentPosition);
-                    }
-                    mHandler.postDelayed(this, 1000);
-                }
-            });
             isBounded = true;
         }
 
@@ -164,6 +151,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             tvAlbum.setText("Unknown");
         }
     }
+
     int progress;
     MediaPlayer mediaPlayer;
     @Override
@@ -178,9 +166,10 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
-        mediaPlayer = playService.getMediaPlayer();
-        mediaPlayer.seekTo(progress);
+        if (mediaPlayer==null)
+            mediaPlayer = playService.getMediaPlayer();
+        seekBar.setProgress(progress);
+        mediaPlayer.seekTo(progress*1000);
 
     }
 
@@ -188,4 +177,23 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void callSetView(Song song) {
         setView(song);
     }
+
+    @Override
+    public void updateSeekbar() {
+        if(mediaPlayer==null){
+            mediaPlayer = playService.getMediaPlayer();
+        }
+        seekBar.setMax(mediaPlayer.getDuration()/1000);
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int currentPosition = mediaPlayer.getCurrentPosition();
+                seekBar.setProgress(currentPosition/1000);
+                handler.postDelayed(this,1000);
+            }
+        });
+
+    }
+
+
 }
