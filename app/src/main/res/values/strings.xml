@@ -8,4 +8,7 @@
     <string name="ascending_order">ascending order</string>
     <string name="descending_order">descending order</string>
     <string name="ThreeDot">⋮</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

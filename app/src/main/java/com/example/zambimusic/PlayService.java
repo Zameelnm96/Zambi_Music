@@ -231,7 +231,16 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         songs.add(position+1,song);
     }
     public void addToPlaynext(ArrayList<Song> songs){
-
+        int i = position + 1;
+        for (Song song:songs){
+            this.songs.add(i++,song);
+        }
+    }
+    public void addToQueue(Song song){
+        songs.add(song);
+    }
+    public void addToqueue(ArrayList<Song> songs){
+        this.songs.addAll(songs);
     }
 
     public int getPosition() {

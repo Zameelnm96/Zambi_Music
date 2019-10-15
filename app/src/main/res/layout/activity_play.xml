@@ -31,9 +31,10 @@
             <TextView
                 android:id="@+id/tvPlayNmae"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="18sp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
                 android:text="TextView"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -41,14 +42,16 @@
             <TextView
                 android:id="@+id/tvPlayArtist"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="16sp"
                 android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
                 android:text="TextView" />
 
             <TextView
                 android:id="@+id/tvPlayAlbum"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center_vertical"
                 android:text="TextView" />
         </LinearLayout>
 
@@ -70,6 +73,23 @@
             android:text="@string/ThreeDot"
             android:textSize="20sp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/ivAlbumArt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout">
+
+        <fragment
+            android:id="@+id/fragment"
+            android:name="com.example.zambimusic.NowPlayingFrag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ImageView

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/itemAlbum"
-        android:title="Goto Album"/>
-    <item android:id="@+id/itemPlayNext"
+
+    <item android:id="@+id/itemPlayNextAlbum"
         android:title="Play Next"/>
-    <item android:id="@+id/itemAddToQueue"
+    <item android:id="@+id/itemAddToQueueAlbum"
         android:title="Add to Queue"/>
 </menu>

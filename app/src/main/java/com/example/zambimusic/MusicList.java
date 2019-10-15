@@ -56,22 +56,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     int position;
 
     TextView textView ;
-    private ServiceConnection serviceConnection= new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
-            playService = myBinder.getService();
-            playService.setList(songs);
-            playService.setPosition(position);
-            playService.setSong();
-            unbindService(this);
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
 
 
     @Override
@@ -190,6 +175,22 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
     @Override
     public void onItemClicked(int index) {
+        ServiceConnection serviceConnection= new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+                playService = myBinder.getService();
+                playService.setList(songs);
+                playService.setPosition(position);
+                playService.setSong();
+                unbindService(this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
         position = index;
         Intent playIntent = new Intent(this,PlayService.class);
         bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
@@ -219,6 +220,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     private Long  TempAlbumID;
     @Override
     public void onLongItemClicked(int index,View v) {
+        position = index;
         PopupMenu popupMenu = new PopupMenu(this,v);
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.inflate(R.menu.pop_up_song_menu);
@@ -244,6 +246,45 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                 startActivity(intent);
                 return true;
 
+            case R.id.itemPlayNext:
+                ServiceConnection serviceConnection = new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+                        playService = myBinder.getService();
+                        Song song = songs.get(position);
+                        playService.addToPlayNext(song);
+                        unbindService(this);
+                    }
+
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+
+                    }
+                };
+                Intent playIntent = new Intent(this,PlayService.class);
+                bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+                return true;
+            case R.id.itemAddToQueue:
+
+
+                bindService( new Intent(this,PlayService.class),
+                        new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+                        playService = myBinder.getService();
+                        Song song = songs.get(position);
+                        playService.addToQueue(song);
+                        unbindService(this);
+                    }
+
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+
+                    }
+                }, Context.BIND_AUTO_CREATE);
+                return true;
         }
         return false;
     }
