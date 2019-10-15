@@ -80,7 +80,6 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_play);
         tvName = findViewById(R.id.tvPlayNmae);
         tvArtist = findViewById(R.id.tvPlayArtist);
@@ -94,6 +93,12 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = findViewById(R.id.seekbarPlayActivity);
         seekBar.setOnSeekBarChangeListener(this);
         btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
+        btnNowPlaying.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PlayActivity.this,NowPlayingActivity.class));
+            }
+        });
         ivAlbumArt.setOnTouchListener(new OnSwipeTouchListener() {
             @Override
             public void onSwipeRight() {
