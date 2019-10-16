@@ -51,7 +51,7 @@ public class AlbumAdapter  extends RecyclerView.Adapter<AlbumAdapter.MyViewHolde
             super(itemView);
             tvNumber = itemView.findViewById(R.id.tvNumber);
             tvName = itemView.findViewById(R.id.tvName);
-            tvArtist = itemView.findViewById(R.id.tvPlayArtist);
+            tvArtist = itemView.findViewById(R.id.tvArtistPlayActivity);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

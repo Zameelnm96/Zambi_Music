@@ -3,7 +3,6 @@ package com.example.zambimusic;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.view.GestureDetector;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,19 +14,20 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, PlayService.ServiceCallback {
-    Button btnNowPlaying,btnMenu,btnPlay,btnPrevious,btnNext;
+    Button btnNowPlaying,btnMenu;
+    ImageButton btnPlay,btnPrevious,btnNext,btnShuffle,btnRepeat;
     ImageView ivAlbumArt;
-    TextView tvName,tvArtist,tvAlbum;
+    TextView tvName,tvArtist,tvAlbum,tvTime,tvDuration;
     private SeekBar seekBar;
     ArrayList<Song> songs;
     PlayService playService;
@@ -43,6 +43,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             isServiceConnectionSet = false;
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
+            songs = playService.getSongs();
             setView(playService.getSong());
             updateSeekbar();
         }
@@ -81,16 +82,18 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        tvName = findViewById(R.id.tvPlayNmae);
-        tvArtist = findViewById(R.id.tvPlayArtist);
-        tvAlbum = findViewById(R.id.tvPlayAlbum);
-        btnNowPlaying = findViewById(R.id.btnNowPlaying);
-        btnMenu = findViewById(R.id.btnMenu);
-        btnPlay = findViewById(R.id.btnPlay);
-        btnPrevious = findViewById(R.id.btnPrevious);
-        btnNext = findViewById(R.id.btnNext);
-        ivAlbumArt = findViewById(R.id.ivAlbumArt);
-        seekBar = findViewById(R.id.seekbarPlayActivity);
+        tvName = findViewById(R.id.tvPlayNamePlayActivity);
+        tvArtist = findViewById(R.id.tvArtistPlayActivity);
+        tvAlbum = findViewById(R.id.tvAlbumPlayActivity);
+        btnNowPlaying = findViewById(R.id.btnNowPlayingPlayActivity);
+        btnMenu = findViewById(R.id.btnMenuPlayActivity);
+        btnPlay = findViewById(R.id.btnPlayPlayActivity);
+        btnPrevious = findViewById(R.id.btnPreviousPlayActivity);
+        btnNext = findViewById(R.id.btnNextPlayActivity);
+        ivAlbumArt = findViewById(R.id.ivAlbumArtPlayActivity);
+        seekBar = findViewById(R.id.seekBarPlayActivity);
+        btnShuffle = findViewById(R.id.btnShufflePlayActivity);
+        btnRepeat = findViewById(R.id.btnRepeatPlayActivity);
         seekBar.setOnSeekBarChangeListener(this);
         btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
         btnNowPlaying.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +145,18 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 playService.playPrevious();
             }
         });
+        btnShuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        btnRepeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         Intent intent = getIntent();
 
@@ -164,10 +179,15 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
        }
-       else if (intent.getStringExtra("class name").equalsIgnoreCase("MainActivity")){
+       else {
+           playIntent = new Intent(this, PlayService.class);
+           bindService(playIntent, serviceConnection2, Context.BIND_AUTO_CREATE);
+       }
+       /*else if (intent.getStringExtra("class name").equalsIgnoreCase("MainActivity")){
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection2,Context.BIND_AUTO_CREATE);
-       }
+       }*/
+
 
 
 

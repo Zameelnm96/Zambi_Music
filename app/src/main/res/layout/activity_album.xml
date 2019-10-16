@@ -7,7 +7,7 @@
     tools:context=".AlbumActivity">
 
     <ImageView
-        android:id="@+id/ivAlbumArt"
+        android:id="@+id/ivAlbumArtPlayActivity"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="10"
@@ -27,12 +27,12 @@
         android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_below="@+id/ivAlbumArt"
-        android:layout_alignBottom="@+id/ivAlbumArt"
+        android:layout_below="@+id/ivAlbumArtPlayActivity"
+        android:layout_alignBottom="@+id/ivAlbumArtPlayActivity"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewAlbum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivAlbumArt"
+        app:layout_constraintTop_toBottomOf="@id/ivAlbumArtPlayActivity"
         app:layout_constraintVertical_weight="2">
 
         <LinearLayout

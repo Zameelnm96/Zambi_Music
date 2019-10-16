@@ -32,7 +32,7 @@
         app:layout_constraintVertical_bias="0.034" />
 
     <Button
-        android:id="@+id/btnNowPlaying"
+        android:id="@+id/btnNowPlayingPlayActivity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Now Playing"

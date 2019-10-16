@@ -15,7 +15,7 @@
 
         android:orientation="horizontal"
         android:paddingRight="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/ivAlbumArt"
+        app:layout_constraintBottom_toTopOf="@+id/ivAlbumArtPlayActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             android:paddingLeft="4dp">
 
             <TextView
-                android:id="@+id/tvPlayNmae"
+                android:id="@+id/tvPlayNamePlayActivity"
                 android:layout_width="match_parent"
                 android:layout_height="18sp"
                 android:layout_gravity="center_vertical"
@@ -40,7 +40,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvPlayArtist"
+                android:id="@+id/tvArtistPlayActivity"
                 android:layout_width="match_parent"
                 android:layout_height="16sp"
                 android:layout_marginTop="4dp"
@@ -48,7 +48,7 @@
                 android:text="TextView" />
 
             <TextView
-                android:id="@+id/tvPlayAlbum"
+                android:id="@+id/tvAlbumPlayActivity"
                 android:layout_width="match_parent"
                 android:layout_height="16sp"
                 android:gravity="center_vertical"
@@ -56,18 +56,20 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnNowPlaying"
+            android:id="@+id/btnNowPlayingPlayActivity"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-
-            android:background="@android:color/transparent" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/music_list"
+            android:scaleType="fitCenter" />
 
         <Button
-            android:id="@+id/btnMenu"
+            android:id="@+id/btnMenuPlayActivity"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center|center_horizontal"
             android:text="@string/ThreeDot"
@@ -80,116 +82,142 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/ivAlbumArt"
+        app:layout_constraintBottom_toTopOf="@id/ivAlbumArtPlayActivity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout">
-        
+
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/ivAlbumArt"
+        android:id="@+id/ivAlbumArtPlayActivity"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="18"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/playLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/playLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="4"
         android:orientation="vertical"
+        app:layout_constraintVertical_weight="5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivAlbumArt">
-
-        <SeekBar
-            android:id="@+id/seekbarPlayActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        app:layout_constraintTop_toBottomOf="@+id/ivAlbumArtPlayActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnShufle"
-                android:layout_width="0dp"
+            <ImageButton
+                android:id="@+id/btnShufflePlayActivity"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="1"
-                android:text="Shufle"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-
-                android:id="@+id/btnPrevious"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="120dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="previous"
-                android:textSize="10sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_not_shuffle"
+                android:text="Button" />
 
-            <Button
-                android:id="@+id/btnPlay"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="0dp"
+            <ImageButton
+                android:id="@+id/btnRepeatPlayActivity"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="1"
-
-                android:background="@android:color/transparent"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnNext"
-                android:layout_width="0dp"
-
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_gravity="right"
+                android:layout_marginLeft="120dp"
+                android:layout_marginRight="30dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="next"
-                android:textSize="10sp"
-                android:textStyle="bold" />
+                android:src="@drawable/ic_not_repeat"
+                android:text="Button" />
+        </LinearLayout>
 
-            <Button
-                android:id="@+id/btnRepeat"
+        <SeekBar
+            android:id="@+id/seekBarPlayActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </SeekBar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvTimePlayActivity"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="1"
-                android:text="Repeat"
-                android:textSize="10sp"
-                android:textStyle="bold" />
+                android:layout_marginRight="100dp"
+                android:layout_weight="1" />
 
+            <TextView
+                android:id="@+id/tvDurationPlayActivity"
+                android:layout_width="14dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:gravity="left" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPreviousPlayActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_left_chevron"
+                android:text="Previous" />
+
+            <ImageButton
+                android:id="@+id/btnPlayPlayActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_play_button"
+                android:scaleType="centerCrop" />
+
+            <ImageButton
+                android:id="@+id/btnNextPlayActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_right_chevron"
+                android:scaleType="centerCrop"
+                android:text="Next" />
         </LinearLayout>
     </LinearLayout>
 

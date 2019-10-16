@@ -52,7 +52,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
         Bundle bundle = intent.getExtras();
         albumSongs = (ArrayList<Song>) bundle.getSerializable("albumSongs");
         Song song = albumSongs.get(0);
-        ImageView ivImageView = findViewById(R.id.ivAlbumArt);
+        ImageView ivImageView = findViewById(R.id.ivAlbumArtPlayActivity);
         Picasso.get().load(song.getUriAlbumArt(song.getAlbumId())).fit().into(ivImageView);
         recyclerView = findViewById(R.id.recyclerViewAlbum);
         albumAdapter = new AlbumAdapter(this,albumSongs);

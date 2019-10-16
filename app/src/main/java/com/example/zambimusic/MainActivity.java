@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity{
         requestRuntimePermision();
         btnSongs = findViewById(R.id.btnSongs);
         btnAlbum = findViewById(R.id.btnAlbum);
-        btnNowPlaying = findViewById(R.id.btnNowPlaying);
+        btnNowPlaying = findViewById(R.id.btnNowPlayingPlayActivity);
         btnSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

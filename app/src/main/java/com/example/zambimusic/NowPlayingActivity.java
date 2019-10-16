@@ -2,6 +2,7 @@ package com.example.zambimusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
@@ -33,27 +34,33 @@ public class NowPlayingActivity extends AppCompatActivity implements AlbumAdapte
         setContentView(R.layout.activity_now_playing);
         tvSongname = findViewById(R.id.tvSongNameNowPlaying);
         tvArtist = findViewById(R.id.tvArtistNowPlaying);
-        btnNowPlaying = findViewById(R.id.btnNowPlayingList);
         btnMenu = findViewById(R.id.btnMenuNowPlaying);
         ivAlbumArt = findViewById(R.id.ivAlbumArtNowPlaying);
+
+
 
 
         bindService(new Intent(this,PlayService.class),
                 new ServiceConnection() {
                     @Override
                     public void onServiceConnected(ComponentName name, IBinder service) {
+
+
                         PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                         playService = myBinder.getService();
                         songs =  playService.getSongs();
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NowPlayingActivity.this);
+                        linearLayoutManager.scrollToPositionWithOffset(playService.getPosition(),0);
                         recyclerView = findViewById(R.id.recyclerViewNowPlaying);
                         albumAdapter = new  AlbumAdapter(NowPlayingActivity.this,songs);
                         recyclerView.setAdapter(albumAdapter);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(NowPlayingActivity.this));
+                        recyclerView.setLayoutManager(linearLayoutManager);
                         recyclerView.setHasFixedSize(true);
+
                         Song song = playService.getSong();
                         tvSongname.setText(song.getName());
                         tvArtist.setText(song.getArtists());
-                        Picasso.get().load(song.getUri()).error(R.drawable.album).into(ivAlbumArt);
+                        Picasso.get().load(song.getUri()).error(R.drawable.album).fit().into(ivAlbumArt);
                         unbindService(this);
                     }
 
@@ -71,7 +78,28 @@ public class NowPlayingActivity extends AppCompatActivity implements AlbumAdapte
     }
 
     @Override
-    public void onItemClicked(int index) {
+    public void onItemClicked(final int index) {
+        bindService(new Intent(this,PlayService.class),
+                new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+
+
+                        PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
+                        playService = myBinder.getService();
+                        songs =  playService.getSongs();
+                        playService.setList(songs);
+                        playService.setPosition(index);
+                        playService.setSong();
+                        unbindService(this);
+                        finish();
+                    }
+
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+
+                    }
+                }, Context.BIND_AUTO_CREATE);
 
     }
 }

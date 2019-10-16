@@ -68,8 +68,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSong = itemView.findViewById(R.id.tvSong);
-            tvArtists = itemView.findViewById(R.id.tvPlayArtist);
-            ivAlbumArt = itemView.findViewById(R.id.ivAlbumArt);
+            tvArtists = itemView.findViewById(R.id.tvArtistPlayActivity);
+            ivAlbumArt = itemView.findViewById(R.id.ivAlbumArtPlayActivity);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
