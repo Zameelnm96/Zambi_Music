@@ -212,7 +212,7 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
                 while(true)
                 {
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(1000);
                         if(mediaPlayer.isPlaying()){
                             currentPlayPosition = mediaPlayer.getCurrentPosition();
                             saveCurrentList();
