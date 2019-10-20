@@ -43,8 +43,29 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             isServiceConnectionSet = false;
             PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
             playService = myBinder.getService();
+            playService.setServiceCallback(PlayActivity.this);
             songs = playService.getSongs();
             setView(playService.getSong());
+
+            if (playService.getIsShuffle()){
+                btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
+            }
+            else{
+                btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
+            }
+            if(playService.getIsepeated()){
+
+                btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+            }
+            else{
+                btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+            }
+            if (playService.getMediaPlayer().isPlaying()){
+                btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
+            }
+            else {
+                btnPlay.setBackgroundResource(R.drawable.ic_play_button);
+            }
             updateSeekbar();
         }
 
@@ -66,6 +87,26 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             updateSeekbar();
             playService.setServiceCallback(PlayActivity.this);
             isBounded = true;
+            if (playService.getIsShuffle()){
+                btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
+            }
+            else{
+
+                btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
+            }
+            if(playService.getIsepeated()){
+
+                btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+            }
+            else{
+                btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+            }
+            if (playService.getMediaPlayer().isPlaying()){
+                btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
+            }
+            else {
+                btnPlay.setBackgroundResource(R.drawable.ic_play_button);
+            }
         }
 
         @Override
@@ -128,6 +169,12 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onClick(View v) {
                 playService.togglePlay();
+                if (playService.getMediaPlayer().isPlaying()){
+                    btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
+                }
+                else {
+                    btnPlay.setBackgroundResource(R.drawable.ic_play_button);
+                }
             }
         });
         btnNext.setOnClickListener(new View.OnClickListener() {
@@ -148,12 +195,28 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (!playService.getIsShuffle()) {
+                    btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
+                    playService.shuffle();
+                }
+                else {
+                    btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
+                    playService.setIsShuffle(false);
+                }
+                refresh();
             }
         });
         btnRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+               if(!playService.getIsepeated()){
+                   playService.setIsReapeated(true);
+                   btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+               }
+               else{
+                   playService.setIsReapeated(false);
+                   btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+               }
 
             }
         });

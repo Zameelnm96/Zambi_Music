@@ -126,7 +126,7 @@
                 android:layout_marginRight="120dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_not_shuffle"
+
                 android:text="Button" />
 
             <ImageButton
@@ -137,8 +137,8 @@
                 android:layout_marginLeft="120dp"
                 android:layout_marginRight="30dp"
                 android:layout_weight="1"
+
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_not_repeat"
                 android:text="Button" />
         </LinearLayout>
 
@@ -202,7 +202,7 @@
                 android:layout_marginRight="40dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_play_button"
+
                 android:scaleType="centerCrop" />
 
             <ImageButton
