@@ -21,11 +21,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.example.zambimusic.roomdb.Song;
 
 
 
@@ -74,19 +76,32 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
         songs = new ArrayList<>();
         ///GetAllMediaMp3Files(sortBy);
-        songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
+       // songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
+        ( (App)this.getApplication()).getViewmodel().getAllSongs().observe(this, new Observer<List<Song>>() {
+            @Override
+            public void onChanged(List<Song> songs) {
+                MusicList.this.songs = (ArrayList<Song>) songs;
+            }
+        });
+
         if (reversed){
             Collections.reverse(songs);
         }
+
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         recyclerView = findViewById(R.id.recyclerView);
         adapter = new SongAdapter(this,songs);
         recyclerView.setAdapter(adapter);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
-
-
     }
 
     @Override
