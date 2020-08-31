@@ -14,7 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".NowPlayingActivity"></activity>
+        <activity
+            android:name=".Home_Screen"
+            android:label="@string/title_activity_home__screen"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".NowPlayingActivity" />
         <activity android:name=".AlbumListActivity" />
         <activity android:name=".PlayActivity" />
         <activity
