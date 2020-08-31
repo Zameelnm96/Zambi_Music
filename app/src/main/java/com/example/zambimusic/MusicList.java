@@ -9,33 +9,37 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.zambimusic.roomdb.Song;
-
+import com.example.zambimusic.service.PlayService;
+import com.example.zambimusic.service.ServiceUtil;
+import com.example.zambimusic.viewmodel.AppViewModel;
 
 
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked, SongAdapter.ItemLongClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
-
+    private static final String TAG = "MusicList";
     RecyclerView recyclerView;
     SongAdapter adapter;
-    ArrayList<Song> songs;
+    ArrayList<Song> mSongs;
     RecyclerView.LayoutManager layoutManager;
     PlayService playService;
     SharedPreferences sharedPreferences;
@@ -51,7 +55,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     int position;
 
     TextView textView ;
-
+    AppViewModel appViewModel;
 
 
     @Override
@@ -63,7 +67,11 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPreferences.edit();
 
-
+        recyclerView = findViewById(R.id.recyclerView);
+        adapter = new SongAdapter(this);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
         //setSupportActionBar(toolbar);
         Toast.makeText(this,"On create Running",Toast.LENGTH_SHORT).show();
@@ -74,19 +82,30 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         Toast.makeText(this,"SORT BY " + sortBy + "reversed " +reversed ,Toast.LENGTH_SHORT).show();
         textView = findViewById(R.id.tvName);
 
-        songs = new ArrayList<>();
+        mSongs = new ArrayList<>();
         ///GetAllMediaMp3Files(sortBy);
        // songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
-        ( (App)this.getApplication()).getViewmodel().getAllSongs().observe(this, new Observer<List<Song>>() {
+        appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
+        appViewModel.getAllSongs().observe(this, new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
-                MusicList.this.songs = (ArrayList<Song>) songs;
+                Log.d(TAG, "onChanged: called");
+                MusicList.this.mSongs = (ArrayList<Song>) songs;
+                if (mSongs.size() > 0) {
+                    Collections.sort(mSongs, new Comparator<Song>() {
+                        @Override
+                        public int compare(final Song object1, final Song object2) {
+                            return object1.getName().compareTo(object2.getName());
+                        }
+                    });
+                }
+
+                adapter.setSongs(MusicList.this.mSongs);
+                recyclerView.setAdapter(adapter);
             }
         });
 
-        if (reversed){
-            Collections.reverse(songs);
-        }
+        
 
 
 
@@ -96,12 +115,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
     @Override
     protected void onResume() {
         super.onResume();
-        recyclerView = findViewById(R.id.recyclerView);
-        adapter = new SongAdapter(this,songs);
-        recyclerView.setAdapter(adapter);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
+
     }
 
     @Override
@@ -122,33 +136,33 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         switch (item.getItemId()) {
             case R.id.itemName:
 
-                songs = MainActivity.GetAllMediaMp3Files(sortOrderByName,this);
+                mSongs = MainActivity.GetAllMediaMp3Files(sortOrderByName,this);
                 if (reversed){
-                    Collections.reverse(songs);
+                    Collections.reverse(mSongs);
                 }
-                adapter.setSongs(songs);
+                adapter.setSongs(mSongs);
                 adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DISPLAY_NAME);// save the state of sorting
                 editor.commit();
                 return true;
             case R.id.itemDateModified:
 
-                songs = MainActivity.GetAllMediaMp3Files(sortOrderByDateModified,this);
+                mSongs = MainActivity.GetAllMediaMp3Files(sortOrderByDateModified,this);
                 if (reversed){
-                    Collections.reverse(songs);
+                    Collections.reverse(mSongs);
                 }
-                adapter.setSongs(songs);
+                adapter.setSongs(mSongs);
                 adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_MODIFIED);
                 editor.commit();
                 return true;
             case R.id.itemDateAdded:
 
-                songs = MainActivity.GetAllMediaMp3Files(sortOrderByDateAdded,this);
+                mSongs = MainActivity.GetAllMediaMp3Files(sortOrderByDateAdded,this);
                 if (reversed){
-                    Collections.reverse(songs);
+                    Collections.reverse(mSongs);
                 }
-                adapter.setSongs(songs);
+                adapter.setSongs(mSongs);
                 adapter.notifyDataSetChanged();
                 editor.putString("sortBy", MediaStore.MediaColumns.DATE_ADDED);
                 editor.commit();
@@ -158,8 +172,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     reversed = false;
                     editor.putBoolean("reversed",false);// save the value on local storage like database
                     editor.commit();// must commit make changes
-                    Collections.reverse(songs);
-                    adapter.setSongs(songs);
+                    Collections.reverse(mSongs);
+                    adapter.setSongs(mSongs);
                     adapter.notifyDataSetChanged();
                 }
                 return true;
@@ -169,8 +183,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     reversed = true;
                     editor.putBoolean("reversed",true);
                     editor.commit();
-                    Collections.reverse(songs);
-                    adapter.setSongs(songs);
+                    Collections.reverse(mSongs);
+                    adapter.setSongs(mSongs);
                     adapter.notifyDataSetChanged();
 
                 }
@@ -188,9 +202,9 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             public void onServiceConnected(ComponentName name, IBinder service) {
                 PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                 playService = myBinder.getService();
-                playService.setList(songs);
+                playService.setList(mSongs);
                 playService.setPosition(position);
-                playService.setSong();
+                ServiceUtil.setSong(playService,playService.getMediaPlayer(),playService.getSongs().get(playService.getPosition()));
                 unbindService(this);
             }
 
@@ -206,7 +220,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         Intent intent = new Intent(this,PlayActivity.class);
         intent.putExtra("index",index);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("songs",songs);
+        bundle.putSerializable("songs", mSongs);
         intent.putExtras(bundle);
         intent.putExtra("class name","MusicList");
 
@@ -234,7 +248,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         popupMenu.inflate(R.menu.pop_up_song_menu);
         popupMenu.show();
 
-        TempAlbumID = songs.get(index).getAlbumId();
+        TempAlbumID = mSongs.get(index).getAlbumId();
 
     }
 
@@ -244,7 +258,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
             case R.id.itemAlbum:
                 Intent intent = new Intent(MusicList.this,AlbumActivity.class);
                 ArrayList<Song> albumSongs = new ArrayList<>() ;
-                for(Song song:songs){
+                for(Song song: mSongs){
                     if (song.getAlbumId() == TempAlbumID)
                         albumSongs.add(song);
                 }
@@ -260,8 +274,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     public void onServiceConnected(ComponentName name, IBinder service) {
                         PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                         playService = myBinder.getService();
-                        Song song = songs.get(position);
-                        playService.addToPlayNext(song);
+                        Song song = mSongs.get(position);
+                        ServiceUtil.addToPlayNext(song,playService.getSongs(),playService.getPosition());
                         unbindService(this);
                     }
 
@@ -282,8 +296,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
                     public void onServiceConnected(ComponentName name, IBinder service) {
                         PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                         playService = myBinder.getService();
-                        Song song = songs.get(position);
-                        playService.addToQueue(song);
+                        Song song = mSongs.get(position);
+                        ServiceUtil.addToQueue(song, playService.getSongs());
                         unbindService(this);
                     }
 

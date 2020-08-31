@@ -12,11 +12,11 @@ import com.example.zambimusic.roomdb.Song;
 
 import java.util.List;
 
-public class ViewModel extends AndroidViewModel {
-    private static final String TAG = "ViewModel";
+public class AppViewModel extends AndroidViewModel {
+    private static final String TAG = "AppViewModel";
     private SongRepository songRepository;
     private LiveData<List<Song>> allSongs;
-    public ViewModel(@NonNull Application application) {
+    public AppViewModel(@NonNull Application application) {
         super(application);
 
         Log.d(TAG, "AndroidViewModel: constructor called");
@@ -28,13 +28,14 @@ public class ViewModel extends AndroidViewModel {
         return allSongs;
     }
 
-    public void insert(Song song){
+    public void insert(Song... song){
         songRepository.insert(song);
     }
+
 
     public void delete(Song song){
         songRepository.delete(song);
     }
 
-    public void clearDB(){ songRepository.deleteAll();}
+    public void deleteAll(){ songRepository.deleteAll();}
 }

@@ -15,7 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.zambimusic.viewmodel.ViewModel;
+import com.example.zambimusic.service.PlayService;
+import com.example.zambimusic.viewmodel.AppViewModel;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -29,7 +30,7 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
+import com.example.zambimusic.roomdb.Song;
 public class MainActivity extends AppCompatActivity{
 
 
@@ -43,16 +44,17 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewModel viewModel = new  ViewModelProvider(this).get(ViewModel.class);
-        viewModel.getAllSongs().observe(this, new Observer<List<com.example.zambimusic.roomdb.Song>>() {
+        AppViewModel appViewModel = new  ViewModelProvider(this).get(AppViewModel.class);
+        appViewModel.getAllSongs().observe(this, new Observer<List<com.example.zambimusic.roomdb.Song>>() {
             @Override
             public void onChanged(List<com.example.zambimusic.roomdb.Song> songs) {
+                Log.d(TAG, "onChanged: song list size = " + songs.size());
                 for(com.example.zambimusic.roomdb.Song song: songs){
                     Log.d(TAG, "onChanged: song name " + song.getAlbum());
                 }
             }
         });
-        Intent playIntent = new Intent(this,PlayService.class);
+        Intent playIntent = new Intent(this, PlayService.class);
         startService(playIntent);
 
         requestRuntimePermision();

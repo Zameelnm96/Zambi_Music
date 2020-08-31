@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
+import com.example.zambimusic.roomdb.Song;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 

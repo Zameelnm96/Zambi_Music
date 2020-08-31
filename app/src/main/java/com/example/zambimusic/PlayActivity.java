@@ -19,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.zambimusic.service.PlayService;
+import com.example.zambimusic.service.ServiceUtil;
 import com.squareup.picasso.Picasso;
-
+import com.example.zambimusic.roomdb.Song;
 import java.util.ArrayList;
 
 public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, PlayService.ServiceCallback {
@@ -45,9 +47,9 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             playService = myBinder.getService();
             playService.setServiceCallback(PlayActivity.this);
             songs = playService.getSongs();
-            setView(playService.getSong());
+            setView(playService.getCurrentSong());
 
-            if (playService.getIsShuffle()){
+            if (playService.getIsShuffled().getBooleanValue()){
                 btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
             }
             else{
@@ -83,11 +85,12 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             playService = myBinder.getService();
             /*playService.setPosition(position);
             playService.setSong();*/
-            setView(playService.getSong());
+            songs = playService.getSongs();
+            setView(playService.getCurrentSong());
             updateSeekbar();
             playService.setServiceCallback(PlayActivity.this);
             isBounded = true;
-            if (playService.getIsShuffle()){
+            if (playService.getIsShuffled().getBooleanValue()){
                 btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
             }
             else{
@@ -146,12 +149,12 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         ivAlbumArt.setOnTouchListener(new OnSwipeTouchListener() {
             @Override
             public void onSwipeRight() {
-                playService.playPrevious();
+                ServiceUtil.playNext(playService,playService.getMediaPlayer(),playService.getSongs(), playService.getWrapPosition());
             }
 
             @Override
             public void onSwipeLeft() {
-                playService.playNext();
+                ServiceUtil.playNext(playService,playService.getMediaPlayer(),playService.getSongs(), playService.getWrapPosition());
 
             }
 
@@ -168,7 +171,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playService.togglePlay();
+                ServiceUtil.togglePlay(playService.getMediaPlayer());
                 if (playService.getMediaPlayer().isPlaying()){
                     btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
                 }
@@ -180,7 +183,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playService.playNext();
+                ServiceUtil.playNext(playService,playService.getMediaPlayer(),playService.getSongs(), playService.getWrapPosition());
 
 
             }
@@ -189,15 +192,15 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             @Override
             public void onClick(View v) {
 
-                playService.playPrevious();
+                ServiceUtil.playPrevious(playService,playService.getMediaPlayer(),playService.getSongs(), playService.getWrapPosition());
             }
         });
         btnShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!playService.getIsShuffle()) {
+                if (!playService.getIsShuffled().getBooleanValue()) {
                     btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
-                    playService.shuffle();
+                    ServiceUtil.shuffle(playService.getIsShuffled(),playService.getSongs(),playService.getWrapPosition());
                 }
                 else {
                     btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
@@ -233,6 +236,17 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
            playIntent = new Intent(this,PlayService.class);
            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
        }
+
+        else if (intent.getStringExtra("class name").equalsIgnoreCase("FragAllSong")){
+            Log.d("testing", "onCreate: music list class");
+            Bundle bundle = intent.getExtras();
+            songs =(ArrayList<Song>) bundle.getSerializable("songs");
+            position = intent.getIntExtra("index",0);
+            Song song = songs.get(position);
+            //setView(song);
+            playIntent = new Intent(this,PlayService.class);
+            bindService(playIntent,serviceConnection,Context.BIND_AUTO_CREATE);
+        }
        else if (intent.getStringExtra("class name").equalsIgnoreCase("AlbumActivity")){
            Bundle bundle = intent.getExtras();
            songs =(ArrayList<Song>) bundle.getSerializable("songs");

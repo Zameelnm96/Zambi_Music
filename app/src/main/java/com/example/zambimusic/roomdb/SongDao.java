@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface SongDao {
     @Query("SELECT * FROM song WHERE name LIKE :name ")
     Song findByName(String name);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(Song... androids);
 
     @Delete

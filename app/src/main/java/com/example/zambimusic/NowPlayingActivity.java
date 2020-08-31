@@ -2,7 +2,6 @@ package com.example.zambimusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
@@ -15,8 +14,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.zambimusic.service.PlayService;
+import com.example.zambimusic.service.ServiceUtil;
 import com.squareup.picasso.Picasso;
-
+import com.example.zambimusic.roomdb.Song;
 import java.util.ArrayList;
 
 
@@ -57,7 +58,7 @@ public class NowPlayingActivity extends AppCompatActivity implements AlbumAdapte
                         recyclerView.setLayoutManager(linearLayoutManager);
                         recyclerView.setHasFixedSize(true);
 
-                        Song song = playService.getSong();
+                        Song song = playService.getCurrentSong();
                         tvSongname.setText(song.getName());
                         tvArtist.setText(song.getArtists());
                         Picasso.get().load(song.getUri()).error(R.drawable.album).fit().into(ivAlbumArt);
@@ -90,7 +91,7 @@ public class NowPlayingActivity extends AppCompatActivity implements AlbumAdapte
                         songs =  playService.getSongs();
                         playService.setList(songs);
                         playService.setPosition(index);
-                        playService.setSong();
+                        ServiceUtil.setSong(playService,playService.getMediaPlayer(),playService.getSongs().get(playService.getPosition()));
                         unbindService(this);
                         finish();
                     }

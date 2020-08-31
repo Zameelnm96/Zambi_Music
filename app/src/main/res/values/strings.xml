@@ -11,4 +11,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_home__screen">Home_Screen</string>
+
+    <string name="tab_text_1">Now Playing</string>
+    <string name="tab_text_2">All songs</string>
+    <string name="tab_text_3">Albums</string>
 </resources>

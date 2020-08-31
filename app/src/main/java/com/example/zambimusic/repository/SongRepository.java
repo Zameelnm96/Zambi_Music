@@ -29,9 +29,12 @@ public class SongRepository {
         return allSongs;
     }
 
-    public void insert(Song song){
+    public void insert(Song... song){
         new InsertAsyncTask(songDao).execute(song);
+        Log.d(TAG, "insert: completed");
     }
+    
+   
 
     public void delete(Song song){
         new DeleteAsyncTask(songDao).execute(song);
@@ -50,6 +53,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(final Song... params) {
             mAsyncTaskDao.insertAll(params[0]);
+            Log.d(TAG, "doInBackground: insert executed");
             return null;
         }
     }
@@ -65,6 +69,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(final Song... params) {
             mAsyncTaskDao.delete(params[0]);
+            Log.d(TAG, "doInBackground: deletion of song " + params[0].getName());
             return null;
         }
     }
@@ -81,6 +86,7 @@ public class SongRepository {
         @Override
         protected Void doInBackground(final Void... params) {
             mAsyncTaskDao.deleteAll();
+            Log.d(TAG, "doInBackground: database cleared");
             return null;
         }
     }

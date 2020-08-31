@@ -14,6 +14,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.zambimusic.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,13 +49,14 @@ public abstract class AppDB extends RoomDatabase {
                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                     super.onCreate(db);
                     Log.d(TAG, "onCreate: called");
-                    new PopulateDbAsync(instance).execute();
+
                 }
 
                 @Override
                 public void onOpen (@NonNull SupportSQLiteDatabase db){
                     super.onOpen(db);
 
+                    new PopulateDbAsync(instance).execute();
                     Log.d(TAG, "onOpen: task excuted..");
                 }
             };
@@ -73,7 +76,7 @@ public abstract class AppDB extends RoomDatabase {
             // Not needed if you only populate the database
             // when it is first created
             mDao.deleteAll();
-            List<Song> songs = getAllMp3(MediaStore.MediaColumns.TITLE, mcontext);
+            List<Song> songs = Util.getAllMp3(MediaStore.MediaColumns.TITLE, mcontext);
             Song[] songsArr = new Song[songs.size()];
             songsArr = songs.toArray(songsArr);
             mDao.insertAll(songsArr);
@@ -82,85 +85,5 @@ public abstract class AppDB extends RoomDatabase {
         }
     }
 
-    public static List<Song> getAllMp3(String sortBy, Context context){
-        ArrayList<Song> songs = new ArrayList<>();
-        ContentResolver contentResolver;
-        Cursor cursor;
-        Uri uri;
 
-        contentResolver = context.getContentResolver();
-
-        uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-        cursor = contentResolver.query(
-                uri, // Uri
-                null,
-                null,
-                null,
-                sortBy
-        );
-
-        if (cursor == null) {
-
-            Log.d(TAG, "getAllMp3: cursor is null");
-
-        } else if (!cursor.moveToFirst()) {
-
-            Log.d(TAG, "getAllMp3: no music found in sd card");
-
-        }
-        else {
-
-            int title = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int artist = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int album = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int composer = cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER);
-            int dateModified = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED);
-            int dateAdded = cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED);
-            int album_id = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);// we can use this for get album art as define in Song class getUriAlbumArt() Method
-
-            int duration = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-
-
-
-
-
-            //Getting Song ID From Cursor.
-            //int id = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
-
-            do {
-
-                // You can also get the Song ID using cursor.getLong(id).
-                //long SongID = cursor.getLong(id);
-                long SongId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
-                Log.d("xyz", "GetAllMediaMp3Files: id " + SongId);
-                String songTitle = cursor.getString(title);
-                String songAlbum = cursor.getString(album);
-                String songComposer = cursor.getString(composer);
-                String songDateModified = cursor.getString(dateModified);
-                String songDateAdded = cursor.getString(dateAdded);
-                String songAtrists = cursor.getString(artist);
-                String songAbumId  = cursor.getString(album_id);
-                String songDuration = cursor.getString(duration);
-                long parseLong = Long.parseLong(songAbumId);
-
-
-
-
-                // Adding Media File Names to ListElementsArrayList.
-                Song song = new Song(SongId);
-
-                song.setName(songTitle);
-                song.setAlbum(songAlbum);
-                song.setSongComposer(songComposer);
-                song.setDateAdded(songDateAdded);
-                song.setDateModified(songDateModified);
-                song.setArtists(songAtrists);
-                song.setAlbumId(parseLong);
-                songs.add(song);
-
-            } while (cursor.moveToNext());
-        }
-        return songs;
-    }
 }

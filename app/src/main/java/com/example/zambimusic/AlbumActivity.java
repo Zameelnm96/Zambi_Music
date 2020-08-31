@@ -20,8 +20,10 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.example.zambimusic.service.PlayService;
+import com.example.zambimusic.service.ServiceUtil;
 import com.squareup.picasso.Picasso;
-
+import com.example.zambimusic.roomdb.Song;
 import java.util.ArrayList;
 
 public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.ItemClicked, PlayService.ServiceCallback,PopupMenu.OnMenuItemClickListener {
@@ -99,7 +101,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
                 playService = myBinder.getService();
                 playService.setList(albumSongs);
                 playService.setPosition(position);
-                playService.setSong();
+                ServiceUtil.setSong(playService,playService.getMediaPlayer(),playService.getSongs().get(playService.getPosition()));
                 playService.setServiceCallback(AlbumActivity.this);
                 isBounded = true;
                 unbindService(this);
@@ -150,7 +152,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
                             public void onServiceConnected(ComponentName name, IBinder service) {
                                 PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                                 playService = myBinder.getService();
-                                playService.addToPlaynext(albumSongs);
+                               ServiceUtil.addToPlayNext(albumSongs,playService.getSongs(),playService.getPosition());
                                 isBounded = true;
                                 unbindService(this);
                             }
@@ -168,7 +170,7 @@ public class AlbumActivity extends AppCompatActivity implements AlbumAdapter.Ite
                             public void onServiceConnected(ComponentName name, IBinder service) {
                                 PlayService.MyBinder myBinder = (PlayService.MyBinder) service;
                                 playService = myBinder.getService();
-                                playService.addToqueue(albumSongs);
+                                ServiceUtil.addToQueue(albumSongs, playService.getSongs());
                                 isBounded = true;
                                 unbindService(this);
                             }

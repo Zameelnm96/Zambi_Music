@@ -1,10 +1,18 @@
 package com.example.zambimusic.roomdb;
 
+import android.content.ContentUris;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity
-public class Song {
+public class Song implements Comparable<com.example.zambimusic.Song> ,Parcelable, Serializable {
     @PrimaryKey
     private long id;
     private String name;
@@ -13,7 +21,8 @@ public class Song {
     private String artists;
     private String dateModified;
     private String dateAdded;
-    private String songComposer;
+    private String composer;
+    private String duration;
     private long albumId;
 
 
@@ -22,8 +31,12 @@ public class Song {
         this.id = id;
     }
 
-    public void setSongComposer(String songComposer) {
-        this.songComposer = songComposer;
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public void setComposer(String composer) {
+        this.composer = composer;
     }
 
     public void setAlbumId(long albumId) {
@@ -82,12 +95,74 @@ public class Song {
         return dateAdded;
     }
 
-    public String getSongComposer() {
-        return songComposer;
+    public String getComposer() {
+        return composer;
     }
 
     public long getAlbumId() {
         return albumId;
     }
 
+    public String getDuration() {
+        return duration;
+    }
+
+    public Uri getUri(){
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+    }
+
+    public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
+
+    protected Song(Parcel in) {
+        name = in.readString();
+        path = in.readString();
+        album = in.readString();
+        artists = in.readString();
+        dateModified = in.readString();
+        dateAdded = in.readString();
+        albumId = in.readLong();
+        duration = in.readString();
+        composer = in.readString();
+        id = in.readLong();
+    }
+
+    public Uri getUriAlbumArt(long albumId) {
+        return ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId); // return the uri of album art.
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(path);
+        dest.writeString(album);
+        dest.writeString(artists);
+        dest.writeString(dateModified);
+        dest.writeString(dateAdded);
+        dest.writeLong(albumId);
+        dest.writeString(duration);
+        dest.writeString(composer);
+        dest.writeLong(id);
+    }
+
+    @Override
+    public int compareTo(com.example.zambimusic.Song o) {
+        if (getName() == null || o.getName() == null)
+            return 0;
+        return  getName().compareTo(o.getName());
+    }
 }

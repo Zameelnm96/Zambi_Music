@@ -7,27 +7,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.example.zambimusic.roomdb.Song;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
     private List<Song> songs;
-    private Context context;
+
     private ItemClicked itemClicked;
     private ItemLongClicked itemLongClicked;
 
 
 
-    public SongAdapter( Context context,List<Song> songs) {
-        this.context = context;
+    public SongAdapter( Fragment context) {
         itemClicked = (ItemClicked) context;
         itemLongClicked = (ItemLongClicked) context;
-        this.songs = songs;
+
+    }
+
+    public SongAdapter( Context context) {
+        itemClicked = (ItemClicked) context;
+        itemLongClicked = (ItemLongClicked) context;
 
     }
     public void setSongs(List<Song> songs) {
