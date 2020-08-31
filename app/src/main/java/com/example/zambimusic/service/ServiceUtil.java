@@ -32,6 +32,7 @@ public abstract class ServiceUtil {
         //currentPlayPosition=mediaPlayer.getCurrentPosition();
         Log.d("testing", "saveCurrentList: " + currentPlayPosition);
         editor.putInt("currentPosition",currentPlayPosition);
+
         editor.apply();
     }
 
@@ -68,6 +69,7 @@ public abstract class ServiceUtil {
     }
 
     public static void shuffle(IsShuffled isShuffled, ArrayList<Song> songs, Position position) {
+
         isShuffled.setBooleanValue(true);
         Song song = songs.get(position.getIntValue());
         Collections.shuffle(songs);

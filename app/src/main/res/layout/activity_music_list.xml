@@ -70,12 +70,17 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="10" />
 
-            <Button
-                android:id="@+id/btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/ic_pause_circular_button" />
+            <com.example.zambimusic.ui.main.RepeatButton
+                android:id="@+id/btRepeat"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+
+                android:layout_marginRight="100dp"
+                android:padding="5dp"
+                app:repeat_state="off"
+                app:src_repeat_all="@drawable/ic_repeat"
+                app:src_repeat_off="@drawable/ic_not_repeat"
+                app:src_repeat_one="@drawable/ic_repeat_one" />
         </LinearLayout>
     </LinearLayout>
 

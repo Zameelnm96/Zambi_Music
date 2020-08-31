@@ -2,14 +2,17 @@ package com.example.zambimusic.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.zambimusic.enums.REPEAT;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.service.singletonvalues.CurrentPlayPosition;
+import com.example.zambimusic.service.singletonvalues.IsRepeated;
 import com.example.zambimusic.service.singletonvalues.IsShuffled;
 import com.example.zambimusic.service.singletonvalues.Position;
 
@@ -18,15 +21,16 @@ import java.util.ArrayList;
 import androidx.annotation.Nullable;
 
 public class PlayService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+    private static final String TAG = "PlayService";
     MediaPlayer mediaPlayer;
     ArrayList<Song> songs;
-
+    SharedPreferences sharedPreferences;
     Position position;
     CurrentPlayPosition currentPlayPosition;
     ServiceCallback serviceCallback;
     boolean setOnclickLisner = false;
     private IsShuffled isShuffled;
-    private boolean isRepeated;
+    private IsRepeated isRepeated;
     private boolean isLoaded = false;
     final Handler handler = new Handler();
     private MyBinder myBinder = new MyBinder();
@@ -47,11 +51,18 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     @Override
     public void onCreate() {
         super.onCreate();
+
+        sharedPreferences = this.getSharedPreferences("shared preferences",MODE_PRIVATE);
         mediaPlayer = new MediaPlayer();
 
         position = Position.getInstance();
         currentPlayPosition = CurrentPlayPosition.getInstance();
         isShuffled = IsShuffled.getInstance();
+        isRepeated = IsRepeated.getInstance();
+
+        isShuffled .setBooleanValue(sharedPreferences.getBoolean("isShuffled",false));
+        isRepeated.setRepeat(REPEAT.toREPEAT(sharedPreferences.getString("repeatEnum",REPEAT.NO_REPEAT.toString())));
+        Log.d(TAG, "onCreate: repeat " + isRepeated.getRepeat().toString());
         mediaPlayer.setOnPreparedListener(this);
         if (songs == null && !isLoaded) {
             songs = new ArrayList<>();
@@ -87,12 +98,17 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
         return isShuffled;
     }
 
-    public void setIsReapeated(boolean isRepeated) {
-        this.isRepeated = isRepeated;
+    public void setIsReapeated(REPEAT repeat) {
+        Log.d(TAG, "setIsReapeated: " + repeat.name());
+        this.isRepeated .setRepeat(repeat);
 
     }
 
-    public boolean getIsepeated() {
+    public REPEAT getIsRepeatedValue() {
+        return isRepeated.getRepeat();
+    }
+
+    public IsRepeated getIsRepeated(){
         return isRepeated;
     }
 
@@ -187,12 +203,27 @@ public class PlayService extends Service implements MediaPlayer.OnPreparedListen
     public void onCompletion(MediaPlayer mp) {
 
         if (getPosition() < songs.size() - 1) {
-            ServiceUtil.playNext(this, mediaPlayer, songs, position);
-        } else {
-            position.setIntValue(0);
-            if (isRepeated) {
+            if(getIsRepeatedValue() == REPEAT.REPEAT_ONE){
                 ServiceUtil.setSong(this, mediaPlayer, songs.get(getPosition()));
             }
+            else {
+                ServiceUtil.playNext(this, mediaPlayer, songs, position);
+            }
+
+        }
+        else {
+            if (getIsRepeatedValue() == REPEAT.REPEAT_ALL) {
+                position.setIntValue(0);
+                ServiceUtil.setSong(this, mediaPlayer, songs.get(getPosition()));
+            }
+            else if(getIsRepeatedValue() == REPEAT.REPEAT_ONE){
+                ServiceUtil.setSong(this, mediaPlayer, songs.get(getPosition()));
+            }
+            else {
+                currentPlayPosition.setIntValue(0);
+            }
+
+
         }
 
 

@@ -129,17 +129,20 @@
 
                 android:text="Button" />
 
-            <ImageButton
-                android:id="@+id/btnRepeatPlayActivity"
-                android:layout_width="wrap_content"
+
+            <com.example.zambimusic.ui.main.RepeatButton
+                android:id="@+id/btRepeat"
+                android:layout_width="12dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
+
                 android:layout_marginLeft="120dp"
                 android:layout_marginRight="30dp"
                 android:layout_weight="1"
-
-                android:background="@android:color/transparent"
-                android:text="Button" />
+                app:repeat_state="off"
+                app:src_repeat_all="@drawable/ic_repeat"
+                app:src_repeat_off="@drawable/ic_not_repeat"
+                app:src_repeat_one="@drawable/ic_repeat_one" />
         </LinearLayout>
 
         <SeekBar

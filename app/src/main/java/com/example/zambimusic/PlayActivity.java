@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,15 +20,19 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.zambimusic.enums.REPEAT;
 import com.example.zambimusic.service.PlayService;
 import com.example.zambimusic.service.ServiceUtil;
+import com.example.zambimusic.ui.main.RepeatButton;
 import com.squareup.picasso.Picasso;
 import com.example.zambimusic.roomdb.Song;
 import java.util.ArrayList;
 
 public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, PlayService.ServiceCallback {
+    private static final String TAG = "PlayActivity";
     Button btnNowPlaying,btnMenu;
     ImageButton btnPlay,btnPrevious,btnNext,btnShuffle,btnRepeat;
+    RepeatButton btRepeat;
     ImageView ivAlbumArt;
     TextView tvName,tvArtist,tvAlbum,tvTime,tvDuration;
     private SeekBar seekBar;
@@ -38,6 +43,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     Intent playIntent;
     Handler handler =new Handler();
     boolean isServiceConnection2Set,isServiceConnectionSet = false;
+    SharedPreferences sharedPreferences;
     ServiceConnection serviceConnection2 = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -51,17 +57,29 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
             if (playService.getIsShuffled().getBooleanValue()){
                 btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
+
             }
             else{
                 btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
             }
-            if(playService.getIsepeated()){
+            if(playService.getIsRepeated().getRepeat() == REPEAT.REPEAT_ALL){
 
-                btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+               // btnRepeat.setBackgroundResource(R.drawable.ic_repeat_one);
+                Log.d(TAG, "onServiceConnected: repeat all" );
+                btRepeat.setRepeatState(REPEAT.REPEAT_ALL);
+
             }
-            else{
-                btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+            else if (playService.getIsRepeated().getRepeat() == REPEAT.REPEAT_ONE){
+                //btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+                Log.d(TAG, "onServiceConnected: no repeat");
+                btRepeat.setRepeatState(REPEAT.REPEAT_ONE);
             }
+            else if (playService.getIsRepeated().getRepeat() == REPEAT.NO_REPEAT){
+                //btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+                Log.d(TAG, "onServiceConnected: no repeat");
+                btRepeat.setRepeatState(REPEAT.NO_REPEAT);
+            }
+
             if (playService.getMediaPlayer().isPlaying()){
                 btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
             }
@@ -97,12 +115,14 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
                 btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
             }
-            if(playService.getIsepeated()){
+            if(playService.getIsRepeated().getRepeat() == REPEAT.REPEAT_ALL){
 
-                btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+               // btnRepeat.setBackgroundResource(R.drawable.ic_repeat_one);
+                btRepeat.setRepeatState(REPEAT.REPEAT_ALL);
             }
             else{
-                btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+                //btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
+                btRepeat.setRepeatState(REPEAT.NO_REPEAT);
             }
             if (playService.getMediaPlayer().isPlaying()){
                 btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
@@ -126,6 +146,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        sharedPreferences = this.getSharedPreferences("shared preferences",MODE_PRIVATE);
         tvName = findViewById(R.id.tvPlayNamePlayActivity);
         tvArtist = findViewById(R.id.tvArtistPlayActivity);
         tvAlbum = findViewById(R.id.tvAlbumPlayActivity);
@@ -137,7 +158,8 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         ivAlbumArt = findViewById(R.id.ivAlbumArtPlayActivity);
         seekBar = findViewById(R.id.seekBarPlayActivity);
         btnShuffle = findViewById(R.id.btnShufflePlayActivity);
-        btnRepeat = findViewById(R.id.btnRepeatPlayActivity);
+        //btnRepeat = findViewById(R.id.btnRepeatPlayActivity);
+        btRepeat = findViewById(R.id.btRepeat);
         seekBar.setOnSeekBarChangeListener(this);
         btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
         btnNowPlaying.setOnClickListener(new View.OnClickListener() {
@@ -200,30 +222,54 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             public void onClick(View v) {
                 if (!playService.getIsShuffled().getBooleanValue()) {
                     btnShuffle.setBackgroundResource(R.drawable.ic_shuffle);
+                    sharedPreferences.edit().putBoolean("isShuffled",true).apply();
                     ServiceUtil.shuffle(playService.getIsShuffled(),playService.getSongs(),playService.getWrapPosition());
                 }
                 else {
                     btnShuffle.setBackgroundResource(R.drawable.ic_not_shuffle);
+                    sharedPreferences.edit().putBoolean("isShuffled",false).apply();
                     playService.setIsShuffle(false);
                 }
                 refresh();
             }
         });
-        btnRepeat.setOnClickListener(new View.OnClickListener() {
+      /*  btnRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(!playService.getIsepeated()){
-                   playService.setIsReapeated(true);
-                   btnRepeat.setBackgroundResource(R.drawable.ic_repeat);
+               if(playService.getIsRepeated().getRepeat() == REPEAT.NO_REPEAT){
+                   playService.setIsReapeated(REPEAT.REPEAT_ALL);
+                   btnRepeat.setBackgroundResource(R.drawable.ic_repeat_one);
                }
                else{
-                   playService.setIsReapeated(false);
+                   playService.setIsReapeated(REPEAT.NO_REPEAT);
                    btnRepeat.setBackgroundResource(R.drawable.ic_not_repeat);
                }
 
             }
+        });*/
+        btRepeat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btRepeat.nextState();
+                switch (btRepeat.getRepeatState()){
+                    case NO_REPEAT:
+                       playService.setIsReapeated(REPEAT.NO_REPEAT);
+                       sharedPreferences.edit().putString("repeatEnum",REPEAT.NO_REPEAT.toString()).apply();
+                        break;
+                    case REPEAT_ONE:
+                        playService.setIsReapeated(REPEAT.REPEAT_ONE);
+                        sharedPreferences.edit().putString("repeatEnum",REPEAT.REPEAT_ONE.toString()).apply();
+                        break;
+                    case REPEAT_ALL:
+                        playService.setIsReapeated(REPEAT.REPEAT_ALL);
+                        sharedPreferences.edit().putString("repeatEnum",REPEAT.REPEAT_ALL.toString()).apply();
+                        break;
+                    default:
+                        playService.setIsReapeated(REPEAT.NO_REPEAT);
+                        sharedPreferences.edit().putString("repeatEnum",REPEAT.NO_REPEAT.toString()).apply();
+                }
+            }
         });
-
         Intent intent = getIntent();
 
        if (intent.getStringExtra("class name").equalsIgnoreCase("MusicList")){

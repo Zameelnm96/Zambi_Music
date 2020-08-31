@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- repeat state -->
+    <attr name="repeat_state">
+        <enum name="off" value="0" />
+        <enum name="one" value="1" />
+        <enum name="all" value="2" />
+    </attr>
+
+    <!-- custom repeat button -->
+    <declare-styleable name="RepeatButton">
+        <attr name="repeat_state" />
+        <attr name="src_repeat_off" format="reference" />
+        <attr name="src_repeat_one" format="reference" />
+        <attr name="src_repeat_all" format="reference" />
+    </declare-styleable>
+
+</resources> 
