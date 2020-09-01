@@ -6,4 +6,13 @@
         android:title="Play Next"/>
     <item android:id="@+id/itemAddToQueue"
         android:title="Add to Queue"/>
+    <item android:id="@+id/itemAddToPlaylist"
+        android:title="Add to playlist">
+        <menu>
+            <item android:id="@+id/playlist_submenu_1"
+                android:title="playlist1" />
+            <item android:id="@+id/playlist_submenu_2"
+                android:title="playlist2" />
+        </menu>
+    </item>
 </menu>

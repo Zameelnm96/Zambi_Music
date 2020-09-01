@@ -15,8 +15,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.zambimusic.repository.PlaylistRepository;
+import com.example.zambimusic.roomdb.Playlist;
 import com.example.zambimusic.service.PlayService;
 import com.example.zambimusic.viewmodel.AppViewModel;
+import com.example.zambimusic.viewmodel.PlaylistViewModel;
+import com.example.zambimusic.viewmodel.SongViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -31,21 +36,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.zambimusic.roomdb.Song;
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
+
 
 
 
     Button btnSongs,btnAlbum,btnNowPlaying;
-    private static final String TAG = "MainActivity";
+    FloatingActionButton floatingActionButton;
 
+    private static final String TAG = "MainActivity";
+    AppViewModel songViewModel;
+    AppViewModel<Playlist> playlistViewModel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AppViewModel appViewModel = new  ViewModelProvider(this).get(AppViewModel.class);
-        appViewModel.getAllSongs().observe(this, new Observer<List<com.example.zambimusic.roomdb.Song>>() {
+
+        //UriObserver.InnerUriObserver.getInstance(this.getContentResolver(),MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,this);
+        songViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication()).create(SongViewModel.class);
+        songViewModel.getAll().observe(this, new Observer<List<com.example.zambimusic.roomdb.Song>>() {
             @Override
             public void onChanged(List<com.example.zambimusic.roomdb.Song> songs) {
                 Log.d(TAG, "onChanged: song list size = " + songs.size());
@@ -87,6 +98,22 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        floatingActionButton = findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playlistViewModel = new ViewModelProvider(MainActivity.this).get(PlaylistViewModel.class);
+                playlistViewModel.findByName("playlist1").observe(MainActivity.this, new Observer<List<Playlist>>() {
+                     @Override
+                     public void onChanged(List<Playlist> playlists) {
+                         Log.d(TAG, "onChanged: called with songs size  " + playlists.size());
+                         for (Playlist playlist: playlists){
+                             Log.d(TAG, "onChanged: song name = " + playlist.getSongId());
+                         }
+                     }
+                 });
+            }
+        });
 
 
 

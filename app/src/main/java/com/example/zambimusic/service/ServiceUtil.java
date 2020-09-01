@@ -149,6 +149,9 @@ public abstract class ServiceUtil {
         }.getType();
         ArrayList<Song> songsTemp = gson.fromJson(json, type);
         songs.clear();
+        if(songsTemp == null){
+            return;
+        }
         songs.addAll(songsTemp);
         position.setIntValue(sharedPreferences.getInt("position", 0));
 

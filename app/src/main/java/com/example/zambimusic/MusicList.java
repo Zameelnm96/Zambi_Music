@@ -29,10 +29,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.zambimusic.repository.PlaylistRepository;
+import com.example.zambimusic.roomdb.Playlist;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.service.PlayService;
 import com.example.zambimusic.service.ServiceUtil;
 import com.example.zambimusic.viewmodel.AppViewModel;
+import com.example.zambimusic.viewmodel.SongViewModel;
 
 
 public class MusicList extends AppCompatActivity implements SongAdapter.ItemClicked, SongAdapter.ItemLongClicked, View.OnClickListener, PopupMenu.OnMenuItemClickListener {
@@ -85,8 +89,8 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         mSongs = new ArrayList<>();
         ///GetAllMediaMp3Files(sortBy);
        // songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
-        appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
-        appViewModel.getAllSongs().observe(this, new Observer<List<Song>>() {
+        appViewModel = new ViewModelProvider(this).get(SongViewModel.class);
+        appViewModel.getAll().observe(this, new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
                 Log.d(TAG, "onChanged: called");
@@ -306,6 +310,15 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
 
                     }
                 }, Context.BIND_AUTO_CREATE);
+                return true;
+            case R.id.playlist_submenu_1:
+                Song song = mSongs.get(position);
+                new PlaylistRepository(this).insertAll(new Playlist("playlist1",song.getId()));
+
+                return true;
+            case R.id.playlist_submenu_2:
+                 song = mSongs.get(position);
+                new PlaylistRepository(this).insertAll(new Playlist("playlist2",song.getId()));
                 return true;
         }
         return false;

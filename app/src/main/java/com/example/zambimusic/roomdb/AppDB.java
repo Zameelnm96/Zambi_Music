@@ -1,9 +1,6 @@
 package com.example.zambimusic.roomdb;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -12,18 +9,24 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.zambimusic.Util;
+import com.example.zambimusic.roomdb.dao.PlaylistDao;
+import com.example.zambimusic.roomdb.dao.SongDao;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Database(entities = {Song.class},version = 1,exportSchema = false)
+@Database(entities = {Song.class, Playlist.class},version = 1,exportSchema = false)
+@TypeConverters(SongTypeConverter.class)
 public abstract class AppDB extends RoomDatabase {
     private static final String TAG = "AppDB";
     public abstract SongDao songDao();
-    private static Context mcontext;
+    public abstract PlaylistDao playlistDao();
+    private static Context mContext;
     private static AppDB instance;
     public static AppDB getDatabase(final Context context) {
         if (instance == null) {
@@ -39,7 +42,7 @@ public abstract class AppDB extends RoomDatabase {
                 }
             }
         }
-        mcontext =  context;
+        mContext =  context;
         return instance;
     }
 
@@ -75,11 +78,7 @@ public abstract class AppDB extends RoomDatabase {
             // Start the app with a clean database every time.
             // Not needed if you only populate the database
             // when it is first created
-            mDao.deleteAll();
-            List<Song> songs = Util.getAllMp3(MediaStore.MediaColumns.TITLE, mcontext);
-            Song[] songsArr = new Song[songs.size()];
-            songsArr = songs.toArray(songsArr);
-            mDao.insertAll(songsArr);
+            InsertUtil.updateMusicList(mDao, mContext);
             Log.d(TAG, "doInBackground: inserted completed");
             return null;
         }

@@ -1,68 +1,56 @@
 package com.example.zambimusic;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.zambimusic.observer.UriObserver;
+import com.example.zambimusic.roomdb.InsertUtil;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.viewmodel.AppViewModel;
+import com.example.zambimusic.viewmodel.SongViewModel;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-public class App extends Application {
+public class App extends Application implements UriObserver.OnChangeListener  {
     AppViewModel appViewModel;
-    BroadcastReceiver scanFileReceiver = new BroadcastReceiver() {
-        private static final String TAG = "App";
-        @Override
-        public void onReceive(Context context, Intent intent) {
+    private static final String TAG = "App";
 
-            if(intent.getAction().equals(Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
-                Uri uri = intent.getData();
+    private Handler handler;
+    private UriObserver observer;
 
-                Log.d(TAG, "onReceive: called with uri" + uri.getPath());
-                String path = null;
-                if (uri != null) {
-                    path = uri.getPath();
-                    File file = new File(uri.getPath());
-                    String ext1 = FilenameUtils.getExtension(path);
-                    Log.d(TAG, "onReceive: is file exist  " + file.exists());
-                    Log.d(TAG, "onReceive: name of file = " + ext1);
-
-                    List<com.example.zambimusic.roomdb.Song> songs = Util.getAllMp3(MediaStore.MediaColumns.TITLE, App.this);
-                    com.example.zambimusic.roomdb.Song[] songsArr = new Song[songs.size()];
-                    songsArr = songs.toArray(songsArr);
-                    appViewModel.insert(songsArr);
-                }
-                //TODO:refresh list in path
-
-            }
-        }
-    };
     @Override
     public void onCreate() {
         super.onCreate();
-        appViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this).create(AppViewModel.class);
-
-        IntentFilter scanFileReceiverFilter= new IntentFilter();
-        scanFileReceiverFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-        scanFileReceiverFilter.addDataScheme("file");
+        appViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this).create(SongViewModel.class);
 
 
-        this.registerReceiver(scanFileReceiver, scanFileReceiverFilter);
-
+        handler = new Handler();
+        observer = new UriObserver(handler,this);
+        this.getContentResolver().
+                registerContentObserver(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        true,
+                        observer);
+        //UriObserver.InnerUriObserver.getInstance(this.getContentResolver(),MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,this);
     }
 
     public AppViewModel getViewmodel(){
         return appViewModel;
+    }
+
+
+    @Override
+    public void onChange(Uri uri) {
+        Log.d(TAG, "onChange: with uri " + uri);
+        InsertUtil.updateMusicList(appViewModel,this);
     }
 }

@@ -8,11 +8,13 @@ import android.provider.MediaStore;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
 
 import java.io.Serializable;
 
 @Entity
-public class Song implements Comparable<com.example.zambimusic.Song> ,Parcelable, Serializable {
+
+public class Song implements Comparable<Song> ,Parcelable, Serializable {
     @PrimaryKey
     private long id;
     private String name;
@@ -160,7 +162,7 @@ public class Song implements Comparable<com.example.zambimusic.Song> ,Parcelable
     }
 
     @Override
-    public int compareTo(com.example.zambimusic.Song o) {
+    public int compareTo(Song o) {
         if (getName() == null || o.getName() == null)
             return 0;
         return  getName().compareTo(o.getName());

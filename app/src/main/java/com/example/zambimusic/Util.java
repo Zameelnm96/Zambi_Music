@@ -8,6 +8,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.example.zambimusic.roomdb.Song;
+import com.example.zambimusic.roomdb.SongTypeConverter;
+import com.example.zambimusic.roomdb.dao.SongDao;
+import com.example.zambimusic.viewmodel.AppViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,4 +134,13 @@ public abstract class Util {
         }
 
     }
+
+    public static Long[] getAllIDs(ArrayList<Song> songs){
+        ArrayList<Long> longs = new ArrayList<>();
+        Long[] longsArr = new Long[longs.size()];
+
+        return longs.toArray(longsArr);
+    }
+
+
 }

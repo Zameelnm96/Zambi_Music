@@ -1,7 +1,6 @@
 package com.example.zambimusic.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -10,32 +9,28 @@ import androidx.lifecycle.LiveData;
 import com.example.zambimusic.repository.SongRepository;
 import com.example.zambimusic.roomdb.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AppViewModel extends AndroidViewModel {
-    private static final String TAG = "AppViewModel";
-    private SongRepository songRepository;
-    private LiveData<List<Song>> allSongs;
+public abstract class AppViewModel<T> extends AndroidViewModel {
+
     public AppViewModel(@NonNull Application application) {
         super(application);
-
-        Log.d(TAG, "AndroidViewModel: constructor called");
-        songRepository = new SongRepository(application);
-        allSongs = songRepository.getAllSongs();
     }
 
-    public LiveData<List<Song>> getAllSongs(){
-        return allSongs;
-    }
+    public abstract LiveData<List<T>> getAll();
+    public abstract LiveData<List<T>> findByName(String name);
 
-    public void insert(Song... song){
-        songRepository.insert(song);
-    }
+    public abstract void deleteModel(T t);
+    public abstract void deleteModel(T[] ts);
+    public abstract  void deleteAllExcept(Long[] ns);
+
+    public abstract void insertModel(T t);
+    public abstract void insertModel(T[] ts);
 
 
-    public void delete(Song song){
-        songRepository.delete(song);
-    }
 
-    public void deleteAll(){ songRepository.deleteAll();}
+
+
+
 }

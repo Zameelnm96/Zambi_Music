@@ -32,6 +32,7 @@ import com.example.zambimusic.SongAdapter;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.service.ServiceUtil;
 import com.example.zambimusic.viewmodel.AppViewModel;
+import com.example.zambimusic.viewmodel.SongViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -96,8 +97,8 @@ public class FragAllSongs extends Fragment implements SongAdapter.ItemClicked, S
         recyclerView.setLayoutManager(layoutManager);
 
 
-        appViewModel = new ViewModelProvider(this).get(AppViewModel.class);
-        appViewModel.getAllSongs().observe(getViewLifecycleOwner(), new Observer<List<Song>>() {
+        appViewModel = new ViewModelProvider(this).get(SongViewModel.class);
+        appViewModel.getAll().observe(getViewLifecycleOwner(), new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {
                 Log.d(TAG, "onChanged: called of observer with size of list " + songs.size());
