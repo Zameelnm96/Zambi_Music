@@ -1,6 +1,6 @@
 package com.example.zambimusic.service.singletonvalues;
 
-import com.example.zambimusic.enums.REPEAT;
+import com.example.zambimusic.data.enums.REPEAT;
 
 public class IsRepeated {
     private REPEAT repeat;

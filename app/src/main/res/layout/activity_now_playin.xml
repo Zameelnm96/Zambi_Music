@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nowPlayingParent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/AppTheme.NoActionBar"
+    tools:context=".NowPlayinActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/now_playing_recycler_view_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <com.example.zambimusic.ui.main.Button.RepeatButton
+        android:id="@+id/repeatButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarPlayActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:repeat_state="off"
+        app:src_repeat_all="@drawable/ic_repeat"
+        app:src_repeat_off="@drawable/ic_not_repeat"
+        app:src_repeat_one="@drawable/ic_repeat_one" />
+
+    <com.example.zambimusic.ui.main.Button.CustomToggleImageButton
+        android:id="@+id/shuffleButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarPlayActivity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:src_state1="@drawable/ic_shuffle"
+        app:src_state2="@drawable/ic_not_shuffle"
+        app:state="state1" />
+
+    <SeekBar
+        android:id="@+id/seekBarPlayActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AA1f1f1f"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        tools:layout_editor_absoluteX="4dp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardview">
+
+        <TextView
+            android:id="@+id/tvProgress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="00:00"
+            android:textColor="@color/textColor"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvTotalTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="00:00"
+            android:textColor="@color/textColor"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!--android:background="#00bcd4"-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/previos"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:drawable/ic_media_previous"
+                android:foregroundGravity="center_vertical" />
+
+            <com.example.zambimusic.ui.main.Button.CustomToggleImageButton
+                android:id="@+id/playPuase"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:foregroundGravity="center_vertical"
+
+                app:state="state1"
+                app:src_state1="@android:drawable/ic_media_play"
+                app:src_state2="@android:drawable/ic_media_pause"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/next"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:state="state1"
+                android:background="@android:drawable/ic_media_next"
+                android:foregroundGravity="center_vertical"
+
+
+                />
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.example.zambimusic.enums.REPEAT;
+import com.example.zambimusic.data.enums.REPEAT;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.service.singletonvalues.CurrentPlayPosition;
 import com.example.zambimusic.service.singletonvalues.IsRepeated;

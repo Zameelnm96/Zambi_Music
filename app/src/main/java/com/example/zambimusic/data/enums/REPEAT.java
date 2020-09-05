@@ -1,4 +1,4 @@
-package com.example.zambimusic.enums;
+package com.example.zambimusic.data.enums;
 
 public enum REPEAT {
     REPEAT_ALL,

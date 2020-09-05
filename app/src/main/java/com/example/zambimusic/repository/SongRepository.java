@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import com.example.zambimusic.roomdb.AppDB;
 import com.example.zambimusic.roomdb.Song;
@@ -24,6 +25,7 @@ public class SongRepository {
         AppDB appDatabase = AppDB.getDatabase(application);
         songDao = appDatabase.songDao();
         allSongs = songDao.getAll();
+        Log.d(TAG, "SongRepository: ");
     }
 
     public LiveData<List<Song>> getAll() {

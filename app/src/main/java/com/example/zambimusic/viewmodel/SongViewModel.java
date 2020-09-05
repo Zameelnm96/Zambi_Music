@@ -40,12 +40,12 @@ public class SongViewModel extends AppViewModel<Song> {
 
     @Override
     public void deleteModel(Song[] songs) {
-
+        songRepository.deleteModel(songs);
     }
 
     @Override
     public  void deleteAllExcept(Long[] ns) {
-        songRepository.deleteAllExcept(ns);
+       // songRepository.deleteAllExcept(ns);
     }
 
     @Override

@@ -16,7 +16,7 @@ public abstract class InsertUtil {
         List<Song> songs = Util.getAllMp3(MediaStore.MediaColumns.TITLE, context);
         Song[] songsArr = new Song[songs.size()];
         songsArr = songs.toArray(songsArr);
-        viewModel.deleteAllExcept(Util.getAllIDs((ArrayList<Song>) songs));
+       // viewModel.deleteAllExcept(Util.getAllIDs((ArrayList<Song>) songs));
         viewModel.insertModel(songsArr);
     }
 

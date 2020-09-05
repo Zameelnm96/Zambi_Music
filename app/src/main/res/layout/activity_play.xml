@@ -130,7 +130,7 @@
                 android:text="Button" />
 
 
-            <com.example.zambimusic.ui.main.RepeatButton
+            <com.example.zambimusic.ui.main.Button.RepeatButton
                 android:id="@+id/btRepeat"
                 android:layout_width="12dp"
                 android:layout_height="match_parent"

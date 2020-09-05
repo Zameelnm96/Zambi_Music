@@ -16,4 +16,26 @@
         <attr name="src_repeat_all" format="reference" />
     </declare-styleable>
 
-</resources> 
+    <!-- play state -->
+    <attr name="state">
+        <enum name="state1" value="0" />
+        <enum name="state2" value="1" />
+    </attr>
+
+    <!-- custom repeat button -->
+    <declare-styleable name="CustomToggleImageButton">
+        <attr name="state" />
+        <attr name="src_state1" format="reference" />
+        <attr name="src_state2" format="reference" />
+    </declare-styleable>
+
+
+
+    <array name="autosize_text_sizes">
+        <item>10sp</item>
+        <item>12sp</item>
+        <item>20sp</item>
+        <item>40sp</item>
+        <item>100sp</item>
+    </array>
+</resources>

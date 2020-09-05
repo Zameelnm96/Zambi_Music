@@ -16,4 +16,16 @@
     <string name="tab_text_1">Now Playing</string>
     <string name="tab_text_2">All songs</string>
     <string name="tab_text_3">Albums</string>
+
+
+    <string name="now_playing_iv_large_desc">this will set in now playing activity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main3">MainActivity3</string>
+    <string name="recent_tab">RECENT</string>
+    <string name="playlist_tab">PLAYLIST</string>
+    <string name="album_tab">ALBUM</string>
+    <string name="all_song_tab">SONGS</string>
+    <string name="medium_album_art">here lies medium size album art of an album</string>
+    <string name="more_option_album">here this button shows more option of album</string>
+
 </resources>

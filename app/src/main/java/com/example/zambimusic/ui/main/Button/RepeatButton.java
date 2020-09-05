@@ -1,4 +1,4 @@
-package com.example.zambimusic.ui.main;
+package com.example.zambimusic.ui.main.Button;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.zambimusic.R;
-import com.example.zambimusic.enums.REPEAT;
+import com.example.zambimusic.data.enums.REPEAT;
 
 public class RepeatButton extends AppCompatImageButton {
     private static final String TAG = "RepeatButton";

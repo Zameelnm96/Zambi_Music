@@ -89,7 +89,7 @@ public class MusicList extends AppCompatActivity implements SongAdapter.ItemClic
         mSongs = new ArrayList<>();
         ///GetAllMediaMp3Files(sortBy);
        // songs = MainActivity.GetAllMediaMp3Files(sortBy,this);
-        appViewModel = new ViewModelProvider(this).get(SongViewModel.class);
+        appViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(SongViewModel.class);
         appViewModel.getAll().observe(this, new Observer<List<Song>>() {
             @Override
             public void onChanged(List<Song> songs) {

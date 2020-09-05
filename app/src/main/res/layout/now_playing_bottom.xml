@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="6dp"
+    android:elevation="100dp"
+    android:padding="10dp">
+
+    <!--android:background="#00bcd4"-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/imageView_small"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="3"
+            android:foregroundGravity="center_vertical"
+            android:src="@android:drawable/ic_media_play"
+
+            />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+
+            android:layout_marginRight="10dp"
+            android:layout_weight="16"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:foregroundGravity="center_horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="Title"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/main"
+            android:textStyle="bold|italic" />
+
+        <com.example.zambimusic.ui.main.Button.CustomToggleImageButton
+            android:id="@+id/btRepeat"
+            android:layout_width="36dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+
+            android:layout_weight="0.5"
+            app:state="state1"
+            app:src_state1="@android:drawable/ic_media_play"
+            app:src_state2="@android:drawable/ic_media_pause" />
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

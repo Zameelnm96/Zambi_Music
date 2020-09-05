@@ -1,6 +1,7 @@
 package com.example.zambimusic;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,12 +11,16 @@ import android.util.Log;
 import com.example.zambimusic.roomdb.Song;
 import com.example.zambimusic.roomdb.SongTypeConverter;
 import com.example.zambimusic.roomdb.dao.SongDao;
+import com.example.zambimusic.roomdb.model.Album;
+import com.example.zambimusic.roomdb.model.Audio;
 import com.example.zambimusic.viewmodel.AppViewModel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Util {
     private static final String TAG = "Util";
@@ -142,5 +147,91 @@ public abstract class Util {
         return longs.toArray(longsArr);
     }
 
+    //from ui 2
 
+    public static void loadAudio(Context context , ArrayList<Audio> audio) {
+        ContentResolver contentResolver = context.getContentResolver();
+        ArrayList<Audio> audioList = null;
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            audioList = new ArrayList<>();
+
+            while (cursor.moveToNext()) {
+                long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
+                String audio_uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id ).toString();
+                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                String album_id = cursor.getString( cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+                // Save to audioList
+                audioList.add(new Audio(Long.toString(id),album_id,audio_uri, title, album, artist));
+
+                String composer = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER));
+            }
+        }
+        if(audioList !=null){
+            audio.addAll(audioList);
+        }
+
+
+        cursor.close();
+
+
+
+    }
+
+    public static void loadAlbum(Context context, ArrayList<Album> mAlbums){
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = getAlbumAlbumcursor(context);
+        ArrayList <Album> albums = null;
+        if (cursor != null && cursor.getCount() > 0) {
+            albums = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                String id = cursor.getString(0);
+                String album_name = cursor.getString(1);
+                String artists = cursor.getString(2);
+                albums.add(new Album(id,album_name,artists));
+            }
+        }
+
+        if(albums != null){
+            mAlbums.addAll(albums);
+        }
+    }
+
+    public static Uri getSongUri(String id){
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(id) );
+    }
+    public static File toFile(Uri uri){
+        return  new File(Objects.requireNonNull(uri.getPath()));
+    }
+
+    public static File toFile(String uri){
+        return  new File(Objects.requireNonNull(Uri.parse( uri).getPath()));
+    }
+
+    public static String convertSecondsToHMmSs(long seconds) {
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        long h = (seconds / (60 * 60)) % 24;
+        return String.format("%02d:%02d",m,s);
+    }
+
+    public static Cursor getAlbumAlbumcursor(Context context)
+    {
+        String where = null;
+        ContentResolver cr = context.getContentResolver();
+        final Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        final String _id = MediaStore.Audio.Albums._ID;
+        final String album_id = MediaStore.Audio.Albums.ALBUM_ID;
+        final String album_name =MediaStore.Audio.Albums.ALBUM;
+        final String artist = MediaStore.Audio.Albums.ARTIST;
+        final String[]columns={_id,album_name, artist};
+        Cursor cursor = cr.query(uri,columns,where,null, null);
+        return cursor;
+    }
 }

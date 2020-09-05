@@ -20,10 +20,10 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.zambimusic.enums.REPEAT;
+import com.example.zambimusic.data.enums.REPEAT;
 import com.example.zambimusic.service.PlayService;
 import com.example.zambimusic.service.ServiceUtil;
-import com.example.zambimusic.ui.main.RepeatButton;
+import com.example.zambimusic.ui.main.Button.RepeatButton;
 import com.squareup.picasso.Picasso;
 import com.example.zambimusic.roomdb.Song;
 import java.util.ArrayList;

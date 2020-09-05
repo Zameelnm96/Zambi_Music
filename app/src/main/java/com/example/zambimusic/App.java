@@ -31,7 +31,7 @@ public class App extends Application implements UriObserver.OnChangeListener  {
     public void onCreate() {
         super.onCreate();
         appViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(this).create(SongViewModel.class);
-
+        InsertUtil.updateMusicList(appViewModel,this);
 
         handler = new Handler();
         observer = new UriObserver(handler,this);

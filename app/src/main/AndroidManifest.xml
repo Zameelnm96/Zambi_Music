@@ -17,8 +17,19 @@
         <activity
             android:name=".Home_Screen"
             android:label="@string/title_activity_home__screen"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity android:name=".NowPlayingActivity" />
+        <activity android:name=".NowPlayingActivity2" />
+        <activity android:name=".MainActivity3"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".AlbumListActivity" />
         <activity android:name=".PlayActivity" />
         <activity
@@ -29,11 +40,7 @@
             android:name=".MusicList"
             android:theme="@style/MusicListTheme" />
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service android:name=".service.PlayService" />
