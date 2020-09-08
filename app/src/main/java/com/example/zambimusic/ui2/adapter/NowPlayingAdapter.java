@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zambimusic.R;
 import com.example.zambimusic.data.Constants;
+import com.example.zambimusic.data.enums.TWO_STATE;
 import com.example.zambimusic.roomdb.model.Audio;
 import com.example.zambimusic.ui.main.Button.CustomToggleImageButton;
 import com.example.zambimusic.ui2.ivutil.ImageViewSetter;
@@ -26,12 +27,22 @@ import java.util.List;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<BottomViewHolder> {
 
+    public void setList(List<Audio> list) {
+        this.list = list;
+    }
+
     List<Audio> list = Collections.emptyList();
     Context context;
     private OnItemClickListener mListener;
 
-    public NowPlayingAdapter(List<Audio> list, Context context) {
-        this.list = list;
+    public CustomToggleImageButton getCustomToggleImageButton() {
+        return customToggleImageButton;
+    }
+
+    private CustomToggleImageButton customToggleImageButton;
+
+    public NowPlayingAdapter( Context context) {
+
         this.context = context;
     }
 
@@ -54,6 +65,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<BottomViewHolder> {
         Uri uri =  ContentUris.withAppendedId(sArtworkUri, Long.parseLong(audio.getAlbum_id()) );
         ImageViewSetter imageViewSetter = ImageViewSetterFactory.getImageViewSetter(Constants.NOW_PLAYING_IV_SMALL);
         imageViewSetter.setImageView(holder.album_art, uri);
+        customToggleImageButton = holder.customToggleImageButton;
     }
 
 
@@ -74,7 +86,7 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<BottomViewHolder> {
         mListener = listener;
     }
     public interface OnItemClickListener{
-        void onPlayButtonClicked(int position);
+        void onPlayButtonClicked(int position, TWO_STATE state);
         void onItemClickListener(int position);
 
     }
@@ -93,10 +105,11 @@ class BottomViewHolder extends RecyclerView.ViewHolder {
         title = (TextView) itemView.findViewById(R.id.title);
 
         title.setSelected(true);
-        customToggleImageButton = (CustomToggleImageButton) itemView.findViewById(R.id.btRepeat);
+        customToggleImageButton = (CustomToggleImageButton) itemView.findViewById(R.id.btnPlayPauseBottom);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (listener != null) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
@@ -115,11 +128,13 @@ class BottomViewHolder extends RecyclerView.ViewHolder {
                 if (listener != null) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        listener.onPlayButtonClicked(position);
+                        listener.onPlayButtonClicked(position,customToggleImageButton.getBtn_state());
                     }
                 }
             }
         });
+
+
     }
 
 }

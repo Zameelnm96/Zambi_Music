@@ -51,7 +51,7 @@
             android:textStyle="bold|italic" />
 
         <com.example.zambimusic.ui.main.Button.CustomToggleImageButton
-            android:id="@+id/btRepeat"
+            android:id="@+id/btnPlayPauseBottom"
             android:layout_width="36dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"

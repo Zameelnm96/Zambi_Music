@@ -3,6 +3,7 @@ package com.example.zambimusic.ui2.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.zambimusic.App;
 import com.example.zambimusic.roomdb.model.Audio;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,6 +23,7 @@ public class StorageUtil {
 
     public void storeAudio(ArrayList<Audio> arrayList) {
         preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
+        ((App) context.getApplicationContext()).setCurrentPlaylist(arrayList);
 
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
@@ -41,6 +43,7 @@ public class StorageUtil {
 
     public void storeAudioIndex(int index) {
         preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
+        ((App) context.getApplicationContext()).setCurrentPosition(index);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("audioIndex", index);
         editor.apply();

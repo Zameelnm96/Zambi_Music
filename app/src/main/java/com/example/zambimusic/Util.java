@@ -13,6 +13,7 @@ import com.example.zambimusic.roomdb.SongTypeConverter;
 import com.example.zambimusic.roomdb.dao.SongDao;
 import com.example.zambimusic.roomdb.model.Album;
 import com.example.zambimusic.roomdb.model.Audio;
+import com.example.zambimusic.ui2.service.StorageUtil;
 import com.example.zambimusic.viewmodel.AppViewModel;
 
 import java.io.File;
@@ -182,6 +183,11 @@ public abstract class Util {
 
 
 
+    }
+
+    public static void loadCurrentPlaylist(Context context , ArrayList<Audio> audio) {
+        StorageUtil storage = new StorageUtil(context);
+        audio = storage.loadAudio();
     }
 
     public static void loadAlbum(Context context, ArrayList<Album> mAlbums){

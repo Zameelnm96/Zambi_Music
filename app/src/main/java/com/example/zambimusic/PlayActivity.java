@@ -159,7 +159,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = findViewById(R.id.seekBarPlayActivity);
         btnShuffle = findViewById(R.id.btnShufflePlayActivity);
         //btnRepeat = findViewById(R.id.btnRepeatPlayActivity);
-        btRepeat = findViewById(R.id.btRepeat);
+        btRepeat = findViewById(R.id.btnPlayPauseBottom);
         seekBar.setOnSeekBarChangeListener(this);
         btnPlay.setBackgroundResource(R.drawable.ic_pause_button);
         btnNowPlaying.setOnClickListener(new View.OnClickListener() {

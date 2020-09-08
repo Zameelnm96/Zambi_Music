@@ -25,16 +25,20 @@ import java.util.List;
 
 public class NowPlayingMainAdapter extends RecyclerView.Adapter<MainViewHolder> {
 
+
+
     List<Audio> list = Collections.emptyList();
     Context context;
     private OnItemClickListener mListener;
 
-    public NowPlayingMainAdapter(List<Audio> list, Context context) {
-        this.list = list;
+    public NowPlayingMainAdapter( Context context) {
+
         this.context = context;
     }
 
-
+    public void setList(List<Audio> list) {
+        this.list = list;
+    }
 
     @NonNull
     @Override

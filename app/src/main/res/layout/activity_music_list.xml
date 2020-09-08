@@ -71,7 +71,7 @@
                 android:layout_weight="10" />
 
             <com.example.zambimusic.ui.main.Button.RepeatButton
-                android:id="@+id/btRepeat"
+                android:id="@+id/btnPlayPauseBottom"
                 android:layout_width="60dp"
                 android:layout_height="40dp"
 

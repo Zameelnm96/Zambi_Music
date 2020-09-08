@@ -10,5 +10,7 @@ public abstract class Constants {
 
     public static final int CLICK_THRESHOLD = 300;
 
+    public static final String COMMAND = "command";
+
 
 }

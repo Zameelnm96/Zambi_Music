@@ -30,6 +30,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.zambimusic.MainActivity3;
 import com.example.zambimusic.R;
+import com.example.zambimusic.data.Constants;
 import com.example.zambimusic.data.enums.PlaybackStatus;
 import com.example.zambimusic.roomdb.model.Audio;
 
@@ -43,10 +44,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         AudioManager.OnAudioFocusChangeListener {
 
     public static final String ACTION_PLAY = "com.valdioveliu.valdio.audioplayer.ACTION_PLAY";
+    public static final String ACTION_RESUME = "com.valdioveliu.valdio.audioplayer.ACTION_RESUME";
     public static final String ACTION_PAUSE = "com.valdioveliu.valdio.audioplayer.ACTION_PAUSE";
     public static final String ACTION_PREVIOUS = "com.valdioveliu.valdio.audioplayer.ACTION_PREVIOUS";
     public static final String ACTION_NEXT = "com.valdioveliu.valdio.audioplayer.ACTION_NEXT";
     public static final String ACTION_STOP = "com.valdioveliu.valdio.audioplayer.ACTION_STOP";
+
+    public static final String ACTION_COMMAND = "com.valdioveliu.valdio.audioplayer.ACTION_COMMAND";
+    public static final String ACTION_NOW_PLAYING_LIST_CHANGED = "com.valdioveliu.valdio.audioplayer.ACTION_NOW_PLAYING_LIST_CHANGED";
 
     //MediaSession
     private MediaSessionManager mediaSessionManager;
@@ -68,13 +73,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private ArrayList<Audio> audioList;
     private int audioIndex = -1;
     private Audio activeAudio; //an object of the currently playing audio
-
+    private static final String TAG = "MediaPlayerService";
     private BroadcastReceiver playNewAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             //Get the new media index form SharedPreferences
-            audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
+            StorageUtil storageUtil = new StorageUtil(getApplicationContext());
+            audioList = storageUtil.loadAudio();
+            audioIndex = storageUtil.loadAudioIndex();
             if (audioIndex != -1 && audioIndex < audioList.size()) {
                 //index is in a valid range
                 activeAudio = audioList.get(audioIndex);
@@ -92,9 +99,30 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
     };
 
+    private BroadcastReceiver commandReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            //Get the new media index form SharedPreferences
+            String command = intent.getStringExtra(Constants.COMMAND);
+
+            switch (command){
+                case ACTION_RESUME:
+                    resumeMedia();
+                    break;
+                case  ACTION_PAUSE:
+                    pauseMedia();
+                    break;
+
+            }
+
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate: ");
         // Perform one-time setup procedures
 
         // Manage incoming phone calls during playback.
@@ -105,17 +133,26 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerBecomingNoisyReceiver();
         //Listen for new Audio to play -- BroadcastReceiver
         register_playNewAudio();
+
+        register_command_receiver();
+    }
+
+    private void register_command_receiver() {
+        IntentFilter intentFilter = new IntentFilter(ACTION_COMMAND);
+        this.registerReceiver(commandReceiver,intentFilter);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind: ");
         return iBinder;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: ");
         try {
             //Load data from SharedPreferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
@@ -157,6 +194,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         if (mediaPlayer != null) {
             stopMedia();
             mediaPlayer.release();
@@ -172,9 +210,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         //unregister BroadcastReceivers
         unregisterReceiver(becomingNoisyReceiver);
         unregisterReceiver(playNewAudio);
+        unregisterReceiver(commandReceiver);
 
         //clear cached playlist
-        new StorageUtil(getApplicationContext()).clearCachedAudioPlaylist();
+        new StorageUtil(getApplicationContext()).clearCachedAudioPlaylist();////////////////////////////
     }
 
     @Override
@@ -344,6 +383,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void resumeMedia() {
+        if(mediaPlayer== null){
+
+            return;
+        }
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.seekTo(resumePosition);
             mediaPlayer.start();
@@ -585,6 +628,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             transportControls.skipToPrevious();
         } else if (actionString.equalsIgnoreCase(ACTION_STOP)) {
             transportControls.stop();
+        }
+    }
+
+    public PlaybackStatus getMediaPlayerStatus(){
+        if(mediaPlayer != null){
+
+            if(mediaPlayer.isPlaying()){
+                return PlaybackStatus.PLAYING;
+            }
+            else {
+                return PlaybackStatus.PAUSED;
+            }
+        }
+        else{
+           return   PlaybackStatus.NOT_DEFINED;
         }
     }
 }

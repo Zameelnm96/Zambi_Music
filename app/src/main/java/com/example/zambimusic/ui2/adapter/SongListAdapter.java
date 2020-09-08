@@ -28,17 +28,23 @@ public class SongListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     List<Audio> list = Collections.emptyList();
     Context context;
+    private OnItemClickListener mListener;
 
     public SongListAdapter(List<Audio> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Inflate the layout, initialize the View Holder
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_list_cardview, parent, false);
-        ViewHolder holder = new ViewHolder(v);
+        ViewHolder holder = new ViewHolder(v,mListener);
         return holder;
 
     }
@@ -66,6 +72,11 @@ public class SongListAdapter extends RecyclerView.Adapter<ViewHolder> {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
+    public interface OnItemClickListener{
+
+        void onItemClickListener(int position);
+
+    }
 }
 
 class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,10 +84,21 @@ class ViewHolder extends RecyclerView.ViewHolder {
     TextView title;
     ImageView play_pause;
 
-    ViewHolder(View itemView) {
+    ViewHolder(View itemView, final SongListAdapter.OnItemClickListener listener) {
         super(itemView);
         title = (TextView) itemView.findViewById(R.id.title);
         play_pause = (ImageView) itemView.findViewById(R.id.imageView_small);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemClickListener(position);
+                    }
+                }
+            }
+        });
     }
 }
 

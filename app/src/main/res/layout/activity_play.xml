@@ -131,7 +131,7 @@
 
 
             <com.example.zambimusic.ui.main.Button.RepeatButton
-                android:id="@+id/btRepeat"
+                android:id="@+id/btnPlayPauseBottom"
                 android:layout_width="12dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"

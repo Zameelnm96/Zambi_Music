@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme.NoActionBar"
-    tools:context=".NowPlayinActivity">
+    tools:context=".NowPlayingActivity2">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/now_playing_recycler_view_main"

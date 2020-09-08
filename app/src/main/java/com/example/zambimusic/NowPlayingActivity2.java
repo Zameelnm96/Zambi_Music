@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,19 +27,65 @@ import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 
 public class NowPlayingActivity2 extends AppCompatActivity implements View.OnClickListener, NowPlayingMainAdapter.OnItemClickListener, SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "NowPlayinActivity";
-    private ArrayList<Audio> audioList = new ArrayList<>();
     SeekBar seekBar;
     TextView tvProgress;
     TextView tvTotalTime;
     CustomToggleImageButton customToggleImageButton;
 
+
+    App app;
+    NowPlayingMainAdapter adapter;
+    RecyclerView recyclerView;
+    LinearLayoutManager linearLayoutManager;
+    int currentPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playin);
-        Util.loadAudio(this, audioList);
 
-        initRecylerview();
+        app =  (App) getApplication();
+        adapter = new NowPlayingMainAdapter(getApplication());
+        adapter.setOnItemClickListener(this);
+        recyclerView = NowPlayingActivity2.this.findViewById(R.id.now_playing_recycler_view_main);
+        recyclerView.setHasFixedSize(true);
+        linearLayoutManager = new LinearLayoutManager(NowPlayingActivity2.this, LinearLayoutManager.HORIZONTAL, false);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged: " + newState);
+                //playthe next song when newstate = 2
+            }
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+
+        app.getCurrentPlaylist().observe(this, new Observer<ArrayList<Audio>>() {
+            @Override
+            public void onChanged(ArrayList<Audio> audio) {
+                Log.d(TAG, "onChanged: current value");
+                if(audio != null){
+                    adapter.setList(audio);
+                    if(recyclerView!=null){
+                        recyclerView.setAdapter(adapter);
+                    }
+                }
+            }
+        });
+
+
+      app.getCurrentPositionLive().observe(this, new Observer<Integer>() {
+          @Override
+          public void onChanged(Integer integer) {
+              Log.d(TAG, "onChanged: integer  tt ");
+              currentPosition = integer;
+              linearLayoutManager.scrollToPositionWithOffset(integer, 0);
+              recyclerView.setLayoutManager(linearLayoutManager);
+          }
+      });
 
         seekBar = findViewById(R.id.seekBarPlayActivity);
         seekBar.setOnSeekBarChangeListener(this);
@@ -73,25 +120,13 @@ public class NowPlayingActivity2 extends AppCompatActivity implements View.OnCli
             Log.d(TAG, "onCreate: recycler view is null");
             return;
         }
-        NowPlayingMainAdapter adapter = new NowPlayingMainAdapter(audioList, getApplication());
-        adapter.setOnItemClickListener(this);
+
+
         AlphaInAnimationAdapter alphaInAnimationAdapter = new AlphaInAnimationAdapter(adapter);
         alphaInAnimationAdapter.setDuration(1000);
         alphaInAnimationAdapter.setInterpolator(new OvershootInterpolator());
         alphaInAnimationAdapter.setFirstOnly(false);
         recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.d(TAG, "onScrollStateChanged: " + newState);
-                //playthe next song when newstate = 2
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
 
 
     }
